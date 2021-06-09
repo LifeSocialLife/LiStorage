@@ -21,7 +21,7 @@ namespace LiStorage.Services.Node
 
         public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime)
         {
-            this.zzDebug = "WebServerWorker";
+            this.zzDebug = "NodeWorker";
 
             _logger = logger;
 
@@ -75,11 +75,11 @@ namespace LiStorage.Services.Node
 
         private void OnStopping()
         {
-            _logger.LogInformation("BackendWorker | OnStopping | Stop all backgrounds work.");
+            _logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work.");
 
          
 
-            _logger.LogInformation("BackendWorker | OnStopping | Stop all backgrounds work. | Done");
+            _logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work. | Done");
             // _logger.LogInformation("OnStopping has been called.");
 
             this.zzDebug = "sdfdf";
