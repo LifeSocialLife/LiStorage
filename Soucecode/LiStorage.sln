@@ -5,11 +5,9 @@ VisualStudioVersion = 16.0.31320.298
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorageNode", "LiStorageNode\LiStorageNode.csproj", "{9B2E07D5-AA69-416A-9F93-BE31F325455C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiStorage.Services", "LiStorage.Services\LiStorage.Services.csproj", "{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Services", "LiStorage.Services\LiStorage.Services.csproj", "{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Testing", "1.Testing", "{706D586E-57D7-4B41-B11A-119355EB3C45}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing_GrpcService1", "Testing_GrpcService1\Testing_GrpcService1.csproj", "{4AF750A1-532D-48F4-804D-D312C76367E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,16 +23,9 @@ Global
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4AF750A1-532D-48F4-804D-D312C76367E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AF750A1-532D-48F4-804D-D312C76367E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AF750A1-532D-48F4-804D-D312C76367E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AF750A1-532D-48F4-804D-D312C76367E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4AF750A1-532D-48F4-804D-D312C76367E3} = {706D586E-57D7-4B41-B11A-119355EB3C45}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59E8829D-A2BF-4DE2-93BA-9E57FD62429E}
