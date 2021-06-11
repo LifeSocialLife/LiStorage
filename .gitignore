@@ -5,6 +5,7 @@
 
 # User-specific files
 /LiStorageNode.conf
+LiStorageNode.conf
 *.rsuser
 *.suo
 *.user
