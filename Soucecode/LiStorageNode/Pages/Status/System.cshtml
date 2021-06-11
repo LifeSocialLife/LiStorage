@@ -1,0 +1,58 @@
+﻿@page
+@model LiStorageNode.Pages.Status.SystemModel
+@using System.Web.Helpers
+@using System.Web
+@using LiStorage.Services
+@inject RundataService rundata
+@{
+
+	@*Layout = null;
+	WebGrid grid = new WebGrid(Model.StatusItems, canSort: true, canPage: true, rowsPerPage: 20);*@
+
+}
+
+
+<h1>Status system</h1>
+
+@*@grid.GetHtml()*@
+
+
+
+
+<table id="myTable" class="table" cellspacing="0">
+	<thead>
+		<tr>
+			<th>
+				Name
+			</th>
+			<th>
+				Info
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in rundata.Hardware.GetAllData())
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Key)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Value)
+				</td>
+			</tr>
+		}
+		@foreach (var item in rundata.Folders.GetAllData())
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Key)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Value)
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+

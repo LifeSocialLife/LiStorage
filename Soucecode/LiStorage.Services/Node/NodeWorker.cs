@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 
+
 namespace LiStorage.Services.Node
 {
     public class NodeWorker : BackgroundService
@@ -19,7 +20,10 @@ namespace LiStorage.Services.Node
         private readonly ILogger<NodeWorker> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime)
+        private readonly RundataService _rundata;
+        private readonly FileOperationService _fileOperation;
+
+        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation)
         {
             this.zzDebug = "NodeWorker";
 
@@ -27,23 +31,37 @@ namespace LiStorage.Services.Node
 
 
             this._hostApplicationLifetime = hostappLifetime;
+            this._rundata = rundataService;
+            this._fileOperation = fileOperation;
+
 
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-        
+
             _hostApplicationLifetime.ApplicationStarted.Register(OnStarted, true);
             _hostApplicationLifetime.ApplicationStopping.Register(OnStopping, true);
             _hostApplicationLifetime.ApplicationStopped.Register(OnStopped, true);
 
+
+            // Get configuration file.
+            this._rundata.Folders.ConfigFile = this._fileOperation.LocateFileInKnownLocations("LiStorageNode.conf");
+            if (string.IsNullOrEmpty(this._rundata.Folders.ConfigFile))
+            {
+                if (System.Diagnostics.Debugger.IsAttached)
+                    System.Diagnostics.Debugger.Break();
+            }
+
+            var ddd = this._rundata;
            
+
 
             while (!stoppingToken.IsCancellationRequested)
             {
                
 
-                _logger.LogInformation($"Background service running :: {stoppingToken.IsCancellationRequested}");
+                //_logger.LogInformation($"Background service running :: {stoppingToken.IsCancellationRequested}");
                 await Task.Delay(2000, stoppingToken);
             }
 
