@@ -1,3 +1,4 @@
+using LiStorage.Services;
 using LiStorage.Services.Node;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,8 +23,33 @@ namespace LiStorageNode
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services) // , IWebHostEnvironment env)
         {
+
+
+            services.AddSingleton<FileOperationService>();
+
+
+            #region RundataService init and data set
+
+            var tmpRundata = new RundataService()
+            {
+                
+                // Platform = PlatformEnum.None,
+            };
+
+            tmpRundata.Folders.PathRuntimes = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
+            
+            services.AddSingleton(tmpRundata);
+
+            #endregion
+
+
+
+            
+            
+
+
             services.AddRazorPages();
 
             services.AddHostedService<NodeWorker>();

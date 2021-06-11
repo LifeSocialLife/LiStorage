@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 
+
 namespace LiStorage.Services.Node
 {
     public class NodeWorker : BackgroundService
@@ -19,31 +20,48 @@ namespace LiStorage.Services.Node
         private readonly ILogger<NodeWorker> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime)
+        private readonly RundataService _rundata;
+        private readonly FileOperationService _fileOperation;
+
+        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation)
         {
-            this.zzDebug = "WebServerWorker";
+            this.zzDebug = "NodeWorker";
 
             _logger = logger;
 
 
             this._hostApplicationLifetime = hostappLifetime;
+            this._rundata = rundataService;
+            this._fileOperation = fileOperation;
+
 
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-        
+
             _hostApplicationLifetime.ApplicationStarted.Register(OnStarted, true);
             _hostApplicationLifetime.ApplicationStopping.Register(OnStopping, true);
             _hostApplicationLifetime.ApplicationStopped.Register(OnStopped, true);
 
+
+            // Get configuration file.
+            this._rundata.Folders.ConfigFile = this._fileOperation.LocateFileInKnownLocations("LiStorageNode.conf");
+            if (string.IsNullOrEmpty(this._rundata.Folders.ConfigFile))
+            {
+                if (System.Diagnostics.Debugger.IsAttached)
+                    System.Diagnostics.Debugger.Break();
+            }
+
+            var ddd = this._rundata;
            
+
 
             while (!stoppingToken.IsCancellationRequested)
             {
                
 
-                _logger.LogInformation($"Background service running :: {stoppingToken.IsCancellationRequested}");
+                //_logger.LogInformation($"Background service running :: {stoppingToken.IsCancellationRequested}");
                 await Task.Delay(2000, stoppingToken);
             }
 
@@ -75,11 +93,11 @@ namespace LiStorage.Services.Node
 
         private void OnStopping()
         {
-            _logger.LogInformation("BackendWorker | OnStopping | Stop all backgrounds work.");
+            _logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work.");
 
          
 
-            _logger.LogInformation("BackendWorker | OnStopping | Stop all backgrounds work. | Done");
+            _logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work. | Done");
             // _logger.LogInformation("OnStopping has been called.");
 
             this.zzDebug = "sdfdf";
