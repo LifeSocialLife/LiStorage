@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Services", "LiSto
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Testing", "1.Testing", "{706D586E-57D7-4B41-B11A-119355EB3C45}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Models", "LiStorage.Models\LiStorage.Models.csproj", "{729BEF25-F3B8-44F9-B62F-C9ED22922D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiStorage.Helpers", "LiStorage.Helpers\LiStorage.Helpers.csproj", "{D17D6A3C-80CD-4727-854C-942504D8F876}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +27,14 @@ Global
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{729BEF25-F3B8-44F9-B62F-C9ED22922D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{729BEF25-F3B8-44F9-B62F-C9ED22922D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{729BEF25-F3B8-44F9-B62F-C9ED22922D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{729BEF25-F3B8-44F9-B62F-C9ED22922D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D17D6A3C-80CD-4727-854C-942504D8F876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D17D6A3C-80CD-4727-854C-942504D8F876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D17D6A3C-80CD-4727-854C-942504D8F876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D17D6A3C-80CD-4727-854C-942504D8F876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
