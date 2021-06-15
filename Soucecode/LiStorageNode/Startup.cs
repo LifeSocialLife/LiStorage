@@ -45,6 +45,8 @@ namespace LiStorageNode
             #endregion
 
             services.AddSingleton<RundataNodeService>();
+            services.AddSingleton<StoragePoolService>();
+
 
             services.AddRazorPages();
 

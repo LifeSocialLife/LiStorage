@@ -21,8 +21,9 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
+        private readonly StoragePoolService _storagepool;
 
-        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode)
+        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService)
         {
             this.zzDebug = "NodeWorker";
 
@@ -33,7 +34,7 @@ namespace LiStorage.Services.Node
             this._rundata = rundataService;
             this._node = rundataNode;
             this._fileOperation = fileOperation;
-
+            this._storagepool = storagePoolService;
 
         }
 
@@ -86,6 +87,8 @@ namespace LiStorage.Services.Node
             
             var ddd = this._rundata;
             
+
+
 
 
             this.zzDebug = "sdfdf";
@@ -300,6 +303,7 @@ namespace LiStorage.Services.Node
 
         }
 
+         
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Background service stopping : {cancellationToken.IsCancellationRequested}");
