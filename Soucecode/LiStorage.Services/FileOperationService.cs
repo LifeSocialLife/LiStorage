@@ -143,7 +143,7 @@ namespace LiStorage.Services
             }
             catch (Exception)
             {
-                return null;
+                return new List<string>();
             }
         }
 
@@ -354,6 +354,21 @@ namespace LiStorage.Services
             }
         }
 
+        internal bool DirectoryExist(string dir)
+        {
+
+            try
+            {
+                if (System.IO.Directory.Exists(dir))
+                    return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
         #endregion
 
 
