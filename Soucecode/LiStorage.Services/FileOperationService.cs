@@ -231,7 +231,7 @@ namespace LiStorage.Services
         {
             try
             {
-                if (String.IsNullOrEmpty(filename)) return null;
+                if (String.IsNullOrEmpty(filename)) return "";
                 return Path.GetExtension(filename);
             }
             catch (Exception)
