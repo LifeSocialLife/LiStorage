@@ -14,7 +14,7 @@ namespace LiStorage.Models.Rundata
         public UInt16 Version { get; set; }
         public List<NodeConfigFileModel_MasterServers> Masters { get; set; }
         public List<NodeConfigFileModel_Collections> Collections { get; set; }
-        public List<StoragePoolNodeConfigFileModel> StoragePools { get; set; }
+        public List<StoragePoolNodeConfigPartModel> StoragePools { get; set; }
         public NodeConfigFileModel()
         {
             this.NodeName = "";
@@ -22,7 +22,7 @@ namespace LiStorage.Models.Rundata
             this.Version = 1;
             this.Masters = new List<NodeConfigFileModel_MasterServers>();
             this.Collections = new List<NodeConfigFileModel_Collections>();
-            this.StoragePools = new List<StoragePoolNodeConfigFileModel>();
+            this.StoragePools = new List<StoragePoolNodeConfigPartModel>();
 
         }
     }
