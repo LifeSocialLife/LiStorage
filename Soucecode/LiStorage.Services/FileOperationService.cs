@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LiStorage.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -369,6 +370,60 @@ namespace LiStorage.Services
 
             return false;
         }
+
+        internal bool DirectoryCreate(string folder)
+        {
+            try
+            {
+                if (!this.DirectoryExist(folder))
+                    System.IO.Directory.CreateDirectory(folder);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        
+        internal long DirectoryGetSize(string dir, bool followChildren, LiTools.Helpers.Convert.FileSizeEnums returnAs)
+        {
+            if (string.IsNullOrEmpty(dir))
+                return 0;
+
+            if (!this.DirectoryExist(dir))
+                return 0;
+
+
+            DirectoryInfo info = new DirectoryInfo(dir);
+
+
+            long totalSize = this.DirectorySize(info, followChildren);
+
+            if (returnAs == LiTools.Helpers.Convert.FileSizeEnums.Bytes)
+                return totalSize;
+
+            var aa = LiTools.Helpers.Convert.Bytes.To(returnAs, totalSize);
+            this.zzDebug = "sdfdsf";
+
+            return Convert.ToInt64(aa);
+        }
+
+        private long DirectorySize(DirectoryInfo dir, bool followChildren)
+        {
+            long totalSize = dir.GetFiles().Sum(fi => fi.Length);
+
+            if (followChildren)
+                totalSize += dir.GetDirectories().Sum(di => DirectorySize(di, followChildren));
+
+            return totalSize;
+
+
+            //return dir.GetFiles().Sum(fi => fi.Length) +
+            //       dir.GetDirectories().Sum(di => DirectorySize(di, followChildren));
+        }
+
         #endregion
 
 
@@ -420,4 +475,6 @@ namespace LiStorage.Services
 
 
     }
+
+    
 }
