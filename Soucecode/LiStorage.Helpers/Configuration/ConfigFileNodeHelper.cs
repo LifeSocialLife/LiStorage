@@ -1,7 +1,9 @@
 ﻿using LiStorage.Models.Rundata;
+using LiStorage.Models.StoragePool;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace LiStorage.Helpers.Configuration
@@ -52,9 +54,9 @@ namespace LiStorage.Helpers.Configuration
                         },
                     },
                 },
-                StoragePools = new List<Models.StoragePool.StoragePoolNodeConfigFileModel>() 
+                StoragePools = new List<Models.StoragePool.StoragePoolNodeConfigPartModel>() 
                 {
-                    new Models.StoragePool.StoragePoolNodeConfigFileModel()
+                    new Models.StoragePool.StoragePoolNodeConfigPartModel()
                     {
                         Enabled = false,
                         Name = "demo",
@@ -69,6 +71,39 @@ namespace LiStorage.Helpers.Configuration
             zzDebug = "edfsdf";
 
             return aa;
+        }
+
+        public static StoragePoolConfigFileModel NodeConfigStoragePoolConfigFile(int AddEncryptionKeysCount = 0, int EncryptionKeyLengt = 20)
+        {
+            var aa = new StoragePoolConfigFileModel()
+            {
+                AllowData = false,
+                AllowMeta = false,
+                Compress = new StoragePoolConfigFileModelCompress()
+                {
+                    CompressAllowd = true,
+                },
+                Encryption = new StoragePoolConfigFileModelEncryption()
+                {
+                    EncryptionAllowd = true,
+                    Keys = new Dictionary<string, string>(),
+                },
+                Id = "demo",
+                StorageType = StoragePoolTypesEnum.None,
+                Version = 1,
+            };
+
+            if (AddEncryptionKeysCount > 0)
+            {
+                for (int i = 1; i < AddEncryptionKeysCount +1; i++)
+                {
+                    aa.Encryption.Keys.Add($"def{i}", LiStorage.Helpers.CommonHelper.RandomString(EncryptionKeyLengt));
+                }
+            }
+
+
+            return aa;
+
         }
     }
 }
