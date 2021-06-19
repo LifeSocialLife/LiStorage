@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Helpers", "LiStor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.LiTools", "1.LiTools", "{AE6BB7EA-1EFE-416E-8D09-174D00552E25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiTools.Helpers.Convert", "..\..\LiTools\LiTools.Helpers.Convert\LiTools.Helpers.Convert.csproj", "{AC43295E-DB8C-4DF5-B0BB-06875BB3367B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,16 +37,9 @@ Global
 		{D17D6A3C-80CD-4727-854C-942504D8F876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17D6A3C-80CD-4727-854C-942504D8F876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D17D6A3C-80CD-4727-854C-942504D8F876}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC43295E-DB8C-4DF5-B0BB-06875BB3367B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC43295E-DB8C-4DF5-B0BB-06875BB3367B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC43295E-DB8C-4DF5-B0BB-06875BB3367B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC43295E-DB8C-4DF5-B0BB-06875BB3367B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{AC43295E-DB8C-4DF5-B0BB-06875BB3367B} = {AE6BB7EA-1EFE-416E-8D09-174D00552E25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59E8829D-A2BF-4DE2-93BA-9E57FD62429E}
