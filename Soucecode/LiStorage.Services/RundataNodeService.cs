@@ -14,7 +14,7 @@ namespace LiStorage.Services
 
         internal Dictionary<string, RundataNodeServiceMastersModel> Masters { get; set; }
         internal Dictionary<string, RundataNodeServiceCollectionModel> Collections { get; set; }
-        internal Dictionary<string, RundataNodeServiceStorageModel> Storage { get; set; }
+        internal Dictionary<string, StoragePoolModel> Storage { get; set; }
         public NodeStartUpStatusModel StartUpStatus { get; set; }
         public RundataNodeServiceConfigFileDataModel ConfigFileData { get; set; }
         public RundataNodeService() // FileOperationService fileOperation)
@@ -22,7 +22,7 @@ namespace LiStorage.Services
             //this._fileOperation = fileOperation;
             this.Masters = new Dictionary<string, RundataNodeServiceMastersModel>();
             this.Collections = new Dictionary<string, RundataNodeServiceCollectionModel>();
-            this.Storage = new Dictionary<string, RundataNodeServiceStorageModel>();
+            this.Storage = new Dictionary<string, StoragePoolModel>();
             this.StartUpStatus = new NodeStartUpStatusModel();
             this.ConfigFileData = new RundataNodeServiceConfigFileDataModel();
             this.zzDebug = "RundataNodeService";
@@ -50,28 +50,6 @@ namespace LiStorage.Services
             this.Filedata = new NodeConfigFileModel_CollectionsAreas();
         }
     }
-
-    internal class RundataNodeServiceStorageModel
-    {
-        internal StoragePoolNodeConfigPartModel Filedata { get; set; }
-        internal StoragePoolConfigFileModel ConfigData { get; set; }
-        internal DateTime DtLastCheck {get;set;}
-        internal bool InitDone { get; set; }
-        internal bool IsWorking { get; set; }
-        internal StoragePoolStatusEnum Status { get; set; }
-        internal RundataNodeServiceStorageModel()
-        {
-            this.Filedata = new StoragePoolNodeConfigPartModel();
-            this.ConfigData = new StoragePoolConfigFileModel();
-            this.DtLastCheck = Convert.ToDateTime("2000-01-01 00:00:00");
-            this.InitDone = false;
-            this.IsWorking = false;
-            this.Status = StoragePoolStatusEnum.Nodata;
-
-        }
-    }
-
-    
 
     public class RundataNodeServiceConfigFileDataModel
     {
