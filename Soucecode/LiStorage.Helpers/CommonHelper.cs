@@ -1,26 +1,49 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 
 namespace LiStorage.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Text;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+
     public static class CommonHelper
     {
 
+        // [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+
+        private static string? zzDebug { get; set; }
+
+        /// <summary>
+        /// Json string to model.
+        /// </summary>
+        /// <typeparam name="T">model.</typeparam>
+        /// <param name="json">json model as string.</param>
+        /// <returns>model T.</returns>
         public static T DeserializeJson<T>(string json)
         {
-            
-            if (String.IsNullOrEmpty(json)) throw new ArgumentNullException(nameof(json));
+            if (string.IsNullOrEmpty(json))
+            {
+                throw new ArgumentNullException(nameof(json));
+            }
+
 #pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<T>(json);
 #pragma warning restore CS8603 // Possible null reference return.
+
         }
 
         public static T DeserializeJson<T>(byte[] data)
         {
-            if (data == null || data.Length < 1) throw new ArgumentNullException(nameof(data));
+            if (data == null || data.Length < 1)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return DeserializeJson<T>(Encoding.UTF8.GetString(data));
         }
 
@@ -53,7 +76,91 @@ namespace LiStorage.Helpers
             return json;
         }
 
+        /// <summary>
+        /// Convert string to ushort.
+        /// </summary>
+        /// <param name="value">input string.</param>
+        /// <returns>output value as true, ushort value or false if convert to ushort is not working.</returns>
+        public static Tuple<bool, ushort> ConvertStringIntoUshort(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return new Tuple<bool, ushort>(false, 0);
+            }
 
+            // Convert version string into uint16
+            try
+            {
+                ushort newValue = ushort.Parse(value);
+                zzDebug = "sdfdsf";
+                return new Tuple<bool, ushort>(true, newValue);
+            }
+            catch (FormatException)
+            {
+                return new Tuple<bool, ushort>(false, 0);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static Tuple<bool, ushort> GetValueFromJsonStringReturnAsUshort(string json, string key)
+        {
+            var tmpData = GetValueFromJsonStringReturnAsString(json, key);
+
+            if (tmpData.Item1)
+            {
+                var returnData = ConvertStringIntoUshort(tmpData.Item2);
+                if (returnData.Item1)
+                {
+                    return new Tuple<bool, ushort>(true, returnData.Item2);
+                }
+            }
+
+            return new Tuple<bool, ushort>(false, 0);
+        }
+
+        /// <summary>
+        /// Get value from a json string using Key name.
+        /// </summary>
+        /// <param name="json">json as string.</param>
+        /// <param name="key">Id to get the value from.</param>
+        /// <returns>false if key not fund in string or true, value if key found inside string.</returns>
+        public static Tuple<bool, string> GetValueFromJsonStringReturnAsString(string json, string key)
+        {
+            if (string.IsNullOrEmpty(json))
+            {
+                return new Tuple<bool, string>(false, string.Empty);
+            }
+
+            if (!json.Contains(key))
+            {
+                return new Tuple<bool, string>(false, string.Empty);
+            }
+
+            int startpos = json.IndexOf(key);
+
+            // string tmpString = tmpConfigFileAsString.Substring(hej);
+            string tmpString = json[startpos..];
+
+            if (tmpString.Contains(":") && tmpString.Contains(","))
+            {
+                int tmpIdFirst = tmpString.IndexOf(":");
+                int tmpIdLast = tmpString.IndexOf(",");
+                string tmpVersionData = tmpString.Substring(tmpIdFirst + 1, tmpIdLast - tmpIdFirst - 1).Trim();
+
+                zzDebug = "dsfdsf";
+
+                return new Tuple<bool, string>(true, tmpVersionData);
+            }
+
+            zzDebug = "sfdsf";
+
+            return new Tuple<bool, string>(false, string.Empty);
+        }
 
         #region IsTrue
 
