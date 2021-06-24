@@ -7,7 +7,7 @@ namespace LiStorage.Models.StoragePool
     public class StoragePoolConfigFileModel
     {
         public string Id { get; set; }
-        public UInt16 Version { get; set; }
+        public ushort Version { get; set; }
         public StoragePoolTypesEnum StorageType { get; set; }
         public bool AllowData { get; set; }
         public bool AllowMeta { get; set; }

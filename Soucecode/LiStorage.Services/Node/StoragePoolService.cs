@@ -1,35 +1,64 @@
-﻿using LiStorage.Models.StoragePool;
-using LiTools.Helpers.Convert;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <summary>
+// Storage pool work.
+// </summary>
+// <copyright file="StoragePoolService.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Services.Node
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Text;
+    using LiStorage.Models.StoragePool;
+    using LiTools.Helpers.Convert;
+    using Microsoft.Extensions.Logging;
+
+    /// <summary>
+    /// Storag pools work service.
+    /// </summary>
     public class StoragePoolService
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
+
+
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
         private string zzDebug { get; set; }
 
+#pragma warning disable SA1309 // Field names should not begin with underscore
+        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
         private readonly ILogger<StoragePoolService> _logger;
-
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
+#pragma warning restore SA1309 // Field names should not begin with underscore
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StoragePoolService"/> class.
+        /// </summary>
+        /// <param name="logger">ILogger.</param>
+        /// <param name="rundataService">RundataService</param>
+        /// <param name="fileOperation">FileOperationService</param>
+        /// <param name="rundataNode">RundataNodeService.</param>
         public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode)
         {
-            this.zzDebug = "NodeWorker";
+            this.zzDebug = "StoragePoolService";
 
-            _logger = logger;
-           
+            this._logger = logger;
+
             this._rundata = rundataService;
             this._node = rundataNode;
             this._fileOperation = fileOperation;
         }
 
+
+        /// <summary>
+        /// Check all storage pool that the are working as it shod.
+        /// </summary>
         internal void CheckStoragePool()
         {
             this.zzDebug = "sdfdf";
@@ -38,21 +67,24 @@ namespace LiStorage.Services.Node
             {
                 foreach (var stg in this._node.Storage)
                 {
+                    // Is init not done for a storage pool. run init.
                     if (!stg.Value.InitDone)
                         this.DoInitOnStoragePool(stg.Key);
                 }
-                
             }
 
             this.zzDebug = "sdfdf";
         }
 
-        internal bool DoInitOnStoragePool(string stgId)
+        private bool DoInitOnStoragePool(string stgId)
         {
             if (!this._node.Storage.ContainsKey(stgId))
-                return false;       //  StoragePool dont exist
+            {
+                // StoragePool dont exist
+                return false;
+            }
 
-            var stg = this._node.Storage[stgId];
+            StoragePoolModel stg = this._node.Storage[stgId];
 
             if (!stg.Filedata.Enabled)
             {
@@ -60,45 +92,45 @@ namespace LiStorage.Services.Node
                 stg.InitDone = true;
                 return false;
             }
-            
-            //  Check that directory exist.
+
+            // Check that directory exist.
             if (!this._fileOperation.DirectoryExist(stg.Filedata.FolderPath))
             {
-                //  Directory dont exist.
+                // Directory dont exist.
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
                 return false;
             }
 
-            //  Do file storage pool config file exist in directory
+            // Do file storage pool config file exist in directory
             if (!this._fileOperation.FileExists($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
             {
-                //  StoragePool config file dont exist. Create default configfile and save 
+                // StoragePool config file dont exist. Create default configfile and save 
 
-                //  Generate default storage config file.
+                // Generate default storage config file.
                 stg.ConfigData = LiStorage.Helpers.Configuration.ConfigFileNodeHelper.NodeConfigStoragePoolConfigFile(5,40);
                 stg.ConfigData.Id = stg.Filedata.Id;
 
-                //  Convert to json
+                // Convert to json
                 var tmpconfigFileAsJson = Helpers.CommonHelper.SerializeJson(stg.ConfigData, true);
 
-                //  Save file.
+                // Save file.
                 if (!this._fileOperation.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
                 {
-                    //  Error saving the file.
+                    // Error saving the file.
                     stg.Status = StoragePoolStatusEnum.FileMissing;
                     stg.InitDone = true;
 
                     this.zzDebug = "dfdsf";
                     return false;
                 }
+
                 this.zzDebug = "sdfdsf";
             }
 
-            #region Read storage config file from storage pool volume
-
+            // Read storage config file from storage pool volume
             var tmpConfigFileAsString = this._fileOperation.ReadTextFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg");
-            
+
             if (string.IsNullOrEmpty(tmpConfigFileAsString))
             {
                 stg.Status = StoragePoolStatusEnum.Error;
@@ -106,70 +138,19 @@ namespace LiStorage.Services.Node
                 return false;
             }
 
-            #endregion
-
-
-            
-            #region Get Version of configfile and convert to model
-
-            UInt16 FileAsStringVersion = 0;
-
-            if (tmpConfigFileAsString.Contains("Version"))
-            {
-                int hej = tmpConfigFileAsString.IndexOf("Version");
-                // string tmpString = tmpConfigFileAsString.Substring(hej);
-                string tmpString = tmpConfigFileAsString[hej..];
-
-
-                if ((tmpString.Contains(":")) && (tmpString.Contains(",")))
-                {
-                    int tmpIdFirst = tmpString.IndexOf(":");
-                    int tmpIdLast = tmpString.IndexOf(",");
-                    string tmpVersionData = tmpString.Substring(tmpIdFirst + 1, tmpIdLast - tmpIdFirst - 1).Trim();
-
-                    //  Convert version string into uint16
-                    try
-                    {
-                        FileAsStringVersion = UInt16.Parse(tmpVersionData);
-                        this.zzDebug = "sdfdsf";
-                        //Console.WriteLine(result);
-                    }
-                    catch (FormatException)
-                    {
-                        this.zzDebug = "dsfdsf";
-                        stg.Status = StoragePoolStatusEnum.Error;
-                        stg.InitDone = true;
-                        return false;
-                        // Console.WriteLine($"Unable to parse '{input}'");
-                    }
-
-
-                    this.zzDebug = "dsfdsf";
-                }
-                else
-                {
-                    this.zzDebug = "dsfdsf";
-                    stg.Status = StoragePoolStatusEnum.Error;
-                    stg.InitDone = true;
-                    return false;
-                }
-                    
-
-                this.zzDebug = "sfdsf";
-
-            }
-            else
+            // Get Version of configfile.
+            var tmpVersionFromString = LiStorage.Helpers.CommonHelper.GetValueFromJsonStringReturnAsUshort(tmpConfigFileAsString, "Version");
+            if (!tmpVersionFromString.Item1)
             {
                 this.zzDebug = "dsfdsf";
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
                 return false;
             }
-                
 
-            if (FileAsStringVersion == 0)
+            if (tmpVersionFromString.Item2 == 0)
             {
-                //  This shod not be 0
+                // This shod not be 0
                 this.zzDebug = "dsfdsf";
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
@@ -178,20 +159,17 @@ namespace LiStorage.Services.Node
 
             this.zzDebug = "sdfdf";
 
-            //  Convert json string into model
+            // Convert json string into model
             stg.ConfigData = LiStorage.Helpers.CommonHelper.DeserializeJson<StoragePoolConfigFileModel>(tmpConfigFileAsString);
 
-            if (FileAsStringVersion != stg.ConfigData.Version)
+            if (tmpVersionFromString.Item2 != stg.ConfigData.Version)
             {
-                //  Version error in config file
+                // Version error in config file
                 this.zzDebug = "dsfdsf";
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
                 return false;
-
             }
-            #endregion
-
 
             #region Create data and meta folder in stg folderpath if the dont exist And shod exist.
 

@@ -12,6 +12,7 @@ namespace LiStorage.Services.Node
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using LiStorage.Models.StoragePool;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
@@ -291,7 +292,7 @@ namespace LiStorage.Services.Node
                             continue;  // Already exist
                         }
 
-                        this._node.Storage.Add(storage.Id, new RundataNodeServiceStorageModel()
+                        this._node.Storage.Add(storage.Id, new StoragePoolModel()
                         {
                             Filedata = storage,
                         });
