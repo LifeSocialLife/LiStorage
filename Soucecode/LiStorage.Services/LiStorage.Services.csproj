@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.Convert\LiTools.Helpers.Convert.csproj" />
+    <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.IO\LiTools.Helpers.IO.csproj" />
     <ProjectReference Include="..\LiStorage.Helpers\LiStorage.Helpers.csproj" />
     <ProjectReference Include="..\LiStorage.Models\LiStorage.Models.csproj" />
     <AdditionalFiles Include="stylecop.json" />

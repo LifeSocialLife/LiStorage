@@ -339,6 +339,7 @@ namespace LiStorage.Services
                 return false;
             }
         }
+
         public bool MoveDirectory(string from, string to)
         {
             try
@@ -386,41 +387,63 @@ namespace LiStorage.Services
             }
 
         }
-        
-        internal long DirectoryGetSize(string dir, bool followChildren, LiTools.Helpers.Convert.FileSizeEnums returnAs)
+
+        /// <summary>
+        /// Get Size of directory.
+        /// </summary>
+        /// <param name="dir">Path to scan.</param>
+        /// <param name="followChildren">Get space of children.</param>
+        /// <param name="returnAs">Return as value.</param>
+        /// <returns>Size of folder.</returns>
+        internal ulong DirectoryGetSize(string dir, bool followChildren, LiTools.Helpers.Convert.FileSizeEnums returnAs)
         {
             if (string.IsNullOrEmpty(dir))
+            {
                 return 0;
+            }
 
             if (!this.DirectoryExist(dir))
+            {
                 return 0;
-
+            }
 
             DirectoryInfo info = new DirectoryInfo(dir);
 
-
-            long totalSize = this.DirectorySize(info, followChildren);
+            ulong totalSize = this.DirectorySize(info, followChildren);
 
             if (returnAs == LiTools.Helpers.Convert.FileSizeEnums.Bytes)
-                return totalSize;
+            {
+                return (ulong)totalSize;
+            }
 
-            var aa = LiTools.Helpers.Convert.Bytes.To(returnAs, totalSize);
+            var aa = LiTools.Helpers.Convert.Bytes.To(returnAs, (long)totalSize);
             this.zzDebug = "sdfdsf";
 
-            return Convert.ToInt64(aa);
+            return (ulong)aa;
+
+            // return Convert.ToInt64(aa);
         }
 
-        private long DirectorySize(DirectoryInfo dir, bool followChildren)
+        private ulong DirectorySize(DirectoryInfo dir, bool followChildren)
         {
-            long totalSize = dir.GetFiles().Sum(fi => fi.Length);
+            ulong totalSize = (ulong)dir.GetFiles().Sum(fi => fi.Length);
 
             if (followChildren)
-                totalSize += dir.GetDirectories().Sum(di => DirectorySize(di, followChildren));
+            {
+                var dd = dir.GetDirectories();
+                foreach (var hej in dd)
+                {
+                    totalSize += this.DirectorySize(hej, followChildren);
+                }
+
+                this.zzDebug = "sdfdf";
+
+                // totalSize += dir.GetDirectories().Sum(di => this.DirectorySize(di, followChildren));
+            }
 
             return totalSize;
 
-
-            //return dir.GetFiles().Sum(fi => fi.Length) +
+            // return dir.GetFiles().Sum(fi => fi.Length) +
             //       dir.GetDirectories().Sum(di => DirectorySize(di, followChildren));
         }
 
@@ -473,8 +496,5 @@ namespace LiStorage.Services
 
         #endregion
 
-
     }
-
-    
 }
