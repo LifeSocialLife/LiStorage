@@ -19,6 +19,26 @@ namespace LiStorage.Models.StoragePool
     public class StoragePoolModel
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="StoragePoolModel"/> class.
+        /// </summary>
+        public StoragePoolModel()
+        {
+            this.InitDone = false;
+
+            // this.IsWorking = false;
+            this.Status = StoragePoolStatusEnum.Nodata;
+            this.DtLastCheck = Convert.ToDateTime("2000-01-01 00:00:00");
+
+            this.Filedata = new StoragePoolNodeConfigPartModel();
+            this.ConfigData = new StoragePoolConfigFileModel();
+
+            this.SpaceFreeCollected = false;
+            this.SpaceFreeInMbytes = 0;
+            this.SpaceUsedCollected = false;
+            this.SpaceUsedInMbytes = 0;
+        }
+
+        /// <summary>
         /// Gets or sets configuration storage pool saved in node config file.
         /// </summary>
         public StoragePoolNodeConfigPartModel Filedata { get; set; }
@@ -49,19 +69,24 @@ namespace LiStorage.Models.StoragePool
         public StoragePoolStatusEnum Status { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StoragePoolModel"/> class.
+        /// Gets or sets space this storage pool is using.
         /// </summary>
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-        public StoragePoolModel()
-        {
-            this.InitDone = false;
+        public ulong SpaceUsedInMbytes { get; set; }
 
-            // this.IsWorking = false;
-            this.Status = StoragePoolStatusEnum.Nodata;
-            this.DtLastCheck = Convert.ToDateTime("2000-01-01 00:00:00");
+        /// <summary>
+        /// Gets or sets a value indicating whether is space used collected.
+        /// </summary>
+        public bool SpaceUsedCollected { get; set; }
 
-            this.Filedata = new StoragePoolNodeConfigPartModel();
-            this.ConfigData = new StoragePoolConfigFileModel();
-        }
+        /// <summary>
+        /// Gets or sets space free on this storagepool.
+        /// </summary>
+        public ulong SpaceFreeInMbytes { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is spave free collected on this storagepool
+        /// </summary>
+        public bool SpaceFreeCollected { get; set; }
+
     }
 }
