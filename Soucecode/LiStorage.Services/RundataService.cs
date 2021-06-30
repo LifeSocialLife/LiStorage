@@ -1,28 +1,47 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿// <summary>
+// Storage pool work.
+// </summary>
+// <copyright file="RundataService.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.Text;
+    using Microsoft.Extensions.Configuration;
+
+    /// <summary>
+    /// Rundata service.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1512:Single-line comments should not be followed by blank line", Justification = "Reviewed.")]
     public class RundataService
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
-        private string zzDebug { get; set; }
 
-        
         public RundataServiceFoldersModel Folders { get; set; }
+
         public RundataServiceHardwareModel Hardware { get; set; }
 
-        //private IConfiguration _Configuration { get; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+        private string zzDebug { get; set; }
 
-        //private readonly FileOperationService _fileOperation;
 
+        // private IConfiguration _Configuration { get; }
+        // private readonly FileOperationService _fileOperation;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RundataService"/> class.
+        /// </summary>
+        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "Reviewed.")]
         public RundataService() // FileOperationService fileOperation)
         {
-            //this._fileOperation = fileOperation;
+            // this._fileOperation = fileOperation;
 
             this.Folders = new RundataServiceFoldersModel();
             this.Hardware = new RundataServiceHardwareModel();
@@ -32,9 +51,9 @@ namespace LiStorage.Services
             this.zzDebug = "RundataService";
 
         }
+
         private void GetPlatformInformation()
         {
-
             //this.Folders.PathRuntimes = this._Configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
@@ -43,7 +62,7 @@ namespace LiStorage.Services
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
             {
-                throw new NotImplementedException();
+                this.Hardware.Platform = PlatformEnum.Linux;
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
             {

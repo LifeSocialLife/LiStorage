@@ -10,7 +10,7 @@ namespace LiStorage.Helpers
     {
         public static string Md5(byte[] data)
         {
-            if (data == null) return null;
+            if (data == null) return "";
 
             MD5 md5 = MD5.Create();
             byte[] hash = md5.ComputeHash(data);
@@ -22,7 +22,7 @@ namespace LiStorage.Helpers
 
         public static string Md5(string data)
         {
-            if (String.IsNullOrEmpty(data)) return null;
+            if (String.IsNullOrEmpty(data)) return "";
 
             MD5 md5 = MD5.Create();
             byte[] dataBytes = System.Text.Encoding.ASCII.GetBytes(data);
@@ -35,7 +35,7 @@ namespace LiStorage.Helpers
 
         public static string Md5(Stream stream)
         {
-            if (stream == null || !stream.CanRead) return null;
+            if (stream == null || !stream.CanRead) return "";
 
             MD5 md5 = MD5.Create();
             byte[] hash = md5.ComputeHash(stream);

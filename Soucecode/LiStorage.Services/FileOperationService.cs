@@ -1,14 +1,24 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
+﻿// <copyright file="FileOperationService.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
 
 namespace LiStorage.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using LiStorage.Helpers;
+    using LiStorage.Services.Classes;
+    using Microsoft.Extensions.Logging;
+
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:DoNotUseRegions", Justification = "Reviewed.")]
+
     public class FileOperationService
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
@@ -18,14 +28,27 @@ namespace LiStorage.Services
         private readonly ILogger<FileOperationService> _logger;
 
         private readonly RundataService _rundata;
+        private readonly RundataNodeService _node;
 
-        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileOperationService"/> class.
+        /// </summary>
+        /// <param name="rundataService"></param>
+        /// <param name="logger"></param>
+        /// <param name="rundataNode"></param>
+        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger, RundataNodeService rundataNode)
         {
             this._logger = logger;
 
             this._rundata = rundataService;
+            this._node = rundataNode;
             this.zzDebug = "FileOperationService";
         }
+
+       
+
+        #region Move All this to helper classes
+
         public string GetFolderFromFilePath(string file)
         {
             if (string.IsNullOrEmpty(file))
@@ -33,8 +56,7 @@ namespace LiStorage.Services
 
             return Path.GetDirectoryName(file);
         }
-        
-        
+
         public string LocateFileInKnownLocations(string configfileName)
         {
             // string configfileName = "LiStorageNode.conf";
@@ -143,7 +165,7 @@ namespace LiStorage.Services
             }
             catch (Exception)
             {
-                return null;
+                return new List<string>();
             }
         }
 
@@ -215,23 +237,13 @@ namespace LiStorage.Services
             }
         }
 
-        public byte[] ReadBinaryFile(string filename)
-        {
-            try
-            {
-                return File.ReadAllBytes(@filename);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        
 
         public string GetFileExtension(string filename)
         {
             try
             {
-                if (String.IsNullOrEmpty(filename)) return null;
+                if (String.IsNullOrEmpty(filename)) return "";
                 return Path.GetExtension(filename);
             }
             catch (Exception)
@@ -338,6 +350,7 @@ namespace LiStorage.Services
                 return false;
             }
         }
+
         public bool MoveDirectory(string from, string to)
         {
             try
@@ -352,6 +365,97 @@ namespace LiStorage.Services
             {
                 return false;
             }
+        }
+
+        internal bool DirectoryExist(string dir)
+        {
+
+            try
+            {
+                if (System.IO.Directory.Exists(dir))
+                    return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        internal bool DirectoryCreate(string folder)
+        {
+            try
+            {
+                if (!this.DirectoryExist(folder))
+                    System.IO.Directory.CreateDirectory(folder);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Get Size of directory.
+        /// </summary>
+        /// <param name="dir">Path to scan.</param>
+        /// <param name="followChildren">Get space of children.</param>
+        /// <param name="returnAs">Return as value.</param>
+        /// <returns>Size of folder.</returns>
+        internal ulong DirectoryGetSize(string dir, bool followChildren, LiTools.Helpers.Convert.FileSizeEnums returnAs)
+        {
+            if (string.IsNullOrEmpty(dir))
+            {
+                return 0;
+            }
+
+            if (!this.DirectoryExist(dir))
+            {
+                return 0;
+            }
+
+            DirectoryInfo info = new DirectoryInfo(dir);
+
+            ulong totalSize = this.DirectorySize(info, followChildren);
+
+            if (returnAs == LiTools.Helpers.Convert.FileSizeEnums.Bytes)
+            {
+                return (ulong)totalSize;
+            }
+
+            var aa = LiTools.Helpers.Convert.Bytes.To(returnAs, (long)totalSize);
+            this.zzDebug = "sdfdsf";
+
+            return (ulong)aa;
+
+            // return Convert.ToInt64(aa);
+        }
+
+        private ulong DirectorySize(DirectoryInfo dir, bool followChildren)
+        {
+            ulong totalSize = (ulong)dir.GetFiles().Sum(fi => fi.Length);
+
+            if (followChildren)
+            {
+                var dd = dir.GetDirectories();
+                foreach (var hej in dd)
+                {
+                    totalSize += this.DirectorySize(hej, followChildren);
+                }
+
+                this.zzDebug = "sdfdf";
+
+                // totalSize += dir.GetDirectories().Sum(di => this.DirectorySize(di, followChildren));
+            }
+
+            return totalSize;
+
+            // return dir.GetFiles().Sum(fi => fi.Length) +
+            //       dir.GetDirectories().Sum(di => DirectorySize(di, followChildren));
         }
 
         #endregion
@@ -403,6 +507,7 @@ namespace LiStorage.Services
 
         #endregion
 
+        #endregion
 
     }
 }
