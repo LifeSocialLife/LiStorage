@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JWT" Version="8.2.2" />
     <PackageReference Include="LiTools.Helpers.Convert" Version="0.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.11.0-1.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0-1.final" />
