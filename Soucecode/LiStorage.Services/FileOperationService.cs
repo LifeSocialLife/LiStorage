@@ -1,15 +1,24 @@
-﻿using LiStorage.Helpers;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
+﻿// <copyright file="FileOperationService.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
 
 namespace LiStorage.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using LiStorage.Helpers;
+    using LiStorage.Services.Classes;
+    using Microsoft.Extensions.Logging;
+
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:DoNotUseRegions", Justification = "Reviewed.")]
+
     public class FileOperationService
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
@@ -19,14 +28,27 @@ namespace LiStorage.Services
         private readonly ILogger<FileOperationService> _logger;
 
         private readonly RundataService _rundata;
+        private readonly RundataNodeService _node;
 
-        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileOperationService"/> class.
+        /// </summary>
+        /// <param name="rundataService"></param>
+        /// <param name="logger"></param>
+        /// <param name="rundataNode"></param>
+        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger, RundataNodeService rundataNode)
         {
             this._logger = logger;
 
             this._rundata = rundataService;
+            this._node = rundataNode;
             this.zzDebug = "FileOperationService";
         }
+
+       
+
+        #region Move All this to helper classes
+
         public string GetFolderFromFilePath(string file)
         {
             if (string.IsNullOrEmpty(file))
@@ -34,8 +56,7 @@ namespace LiStorage.Services
 
             return Path.GetDirectoryName(file);
         }
-        
-        
+
         public string LocateFileInKnownLocations(string configfileName)
         {
             // string configfileName = "LiStorageNode.conf";
@@ -216,17 +237,7 @@ namespace LiStorage.Services
             }
         }
 
-        public byte[] ReadBinaryFile(string filename)
-        {
-            try
-            {
-                return File.ReadAllBytes(@filename);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        
 
         public string GetFileExtension(string filename)
         {
@@ -493,6 +504,8 @@ namespace LiStorage.Services
                 }
             }
         }
+
+        #endregion
 
         #endregion
 

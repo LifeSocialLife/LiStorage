@@ -10,10 +10,16 @@ namespace LiStorage.Services.Node
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System.Data;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Threading.Tasks;
     using LiStorage.Models.StoragePool;
+    using LiStorage.Services.Classes;
     using LiTools.Helpers.Convert;
     using Microsoft.Extensions.Logging;
 
@@ -22,9 +28,6 @@ namespace LiStorage.Services.Node
     /// </summary>
     public class StoragePoolService
     {
-
-
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
@@ -36,14 +39,15 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
+        private readonly object _lockKey;
 #pragma warning restore SA1309 // Field names should not begin with underscore
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoragePoolService"/> class.
         /// </summary>
         /// <param name="logger">ILogger.</param>
-        /// <param name="rundataService">RundataService</param>
-        /// <param name="fileOperation">FileOperationService</param>
+        /// <param name="rundataService">RundataService.</param>
+        /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
         public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode)
         {
@@ -54,85 +58,190 @@ namespace LiStorage.Services.Node
             this._rundata = rundataService;
             this._node = rundataNode;
             this._fileOperation = fileOperation;
+            this.Storage = new Dictionary<string, StoragePoolModel>();
+            this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
+            this._lockKey = new object();
         }
 
+        /// <summary>
+        /// Dp storage pool exist?.
+        /// </summary>
+        /// <param name="name">storage id (Key).</param>
+        /// <returns>bool - true or false.</returns>
+        [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:BracesMustNotBeOmitted", Justification = "Reviewed.")]
+        public bool ContainsKey(string name)
+        {
+            bool tmpReturn = false;
+
+            lock (this._lockKey)
+            {
+                if (this.Storage.ContainsKey(name))
+                    tmpReturn = true;
+            }
+
+            return tmpReturn;
+        }
+
+        public bool Add(string key, StoragePoolModel data)
+        {
+
+            lock (this._lockKey)
+            {
+                this.Storage.Add(key,data);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Get information.
+        /// </summary>
+        /// <param name="key">storage pool id.</param>
+        /// <returns>StoragePoolModel.</returns>
+        internal StoragePoolModel Get(string key)
+        {
+            StoragePoolModel? data;
+
+            lock (this._lockKey)
+            {
+                data = this.Storage[key];
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Get meta file from storagepool.
+        /// </summary>
+        /// <param name="stg">StoragePoolModel.</param>
+        /// <param name="path">string[] path.</param>
+        /// <param name="data">BlockStorageDictModel.</param>
+        /// <returns>model: BlockStorageDictModel.</returns>
+        internal Models.ObjectStorage.BlockStorageDictModel GetMetaFile(StoragePoolModel stg, string[] path, Models.ObjectStorage.BlockStorageDictModel data)
+        {
+            data.FileMetaPath = Path.Combine("meta", Path.Combine(path)).Trim().ToLower() + ".meta";
+            data.FileMetaPathWhitStoragePath = Path.Combine(stg.Filedata.FolderPath, data.FileMetaPath).Trim().ToLower();
+
+            this.zzDebug = "sfdsf";
+
+            // Check if meta data file exist?
+            if (!LiTools.Helpers.IO.File.Exist(data.FileMetaPathWhitStoragePath))
+            {
+                data.FileMetaExist = false;
+                this.zzDebug = "sdfds";
+                return data;
+            }
+
+
+            this.zzDebug = "sdfds";
+            return data;
+        }
+
+        /// <summary>
+        /// Gets or sets storage model. Information about all storage pool in dictonary.
+        /// </summary>
+        private Dictionary<string, StoragePoolModel> Storage { get; set; }
+
+        /// <summary>
+        /// Gets or sets when was storage last checked?.
+        /// </summary>
+        private DateTime StorageLastChecked { get; set; }
 
         /// <summary>
         /// Check all storage pool that the are working as it shod.
         /// </summary>
-        internal void CheckStoragePool()
+        internal void CheckStoragePools()
         {
             this.zzDebug = "sdfdf";
-
-            if (this._node.Storage?.Count > 0)
+            if (!Helpers.TimeHelper.TimeShodTrigger(this.StorageLastChecked, Helpers.TimeValuesEnum.Minutes, 2))
             {
-                foreach (var stg in this._node.Storage)
+                return;
+            }
+
+            if (this.Storage?.Count > 0)
+            {
+                lock (this._lockKey)
                 {
-                    // Is init not done for a storage pool. run init.
-                    if (!stg.Value.InitDone)
+                    foreach (var stg in this.Storage)
                     {
-                        if (this.DoInitOnStoragePool(stg.Key))
+                        // Is init not done for a storage pool. run init.
+                        if (!stg.Value.InitDone)
                         {
-                            stg.Value.Status = StoragePoolStatusEnum.Working;
+                            if (this.DoInitOnStoragePool(stg.Key))
+                            {
+                                stg.Value.Status = StoragePoolStatusEnum.Working;
+                            }
+                            else
+                            {
+                                stg.Value.Status = StoragePoolStatusEnum.Error;
+
+                                if (System.Diagnostics.Debugger.IsAttached)
+                                {
+                                    System.Diagnostics.Debugger.Break();
+                                }
+                            }
                         }
-                        else
-                        {
-                            stg.Value.Status = StoragePoolStatusEnum.Error;
-                        }
+
+                        stg.Value.DtLastCheck = DateTime.UtcNow;
+                        this.zzDebug = "dsfdsf";
                     }
-
-                    var ss = this.GetUsedSpaceInMegabyte(stg.Key);
-
-                    // var dd1 = this._fileOperation.DirectoryGetSize(stg.Filedata.FolderPath, true, FileSizeEnums.Megabytes);
-                    // var dd2 = this.GetUsedSpaceInMegabyte(@"E:\Xplane Custom Scenery"); // , true, FileSizeEnums.Megabytes);
-                    // var dd3 = this.GetUsedSpaceInMegabyte(@"E:\games"); // , true, FileSizeEnums.Megabytes);
-
-                    this.zzDebug = "dsfdsf";
                 }
+
             }
 
             this.zzDebug = "sdfd";
 
             // Collect information about drives in system.
-            this.CollecNodesDriveInformation();
+            if (Helpers.TimeHelper.TimeShodTrigger(this._node.DrivesInformation.LastChecked, Helpers.TimeValuesEnum.Minutes, 2))
+            {
+                this.CollecNodesDriveInformation();
+                this.zzDebug = "dfdf";
+            }
 
+            // var dddf = this._node.DrivesInformation;
+            this.NodesDriveInformationDataChangeHandler();
 
-            var dddf = this._node.DrivesInformation;
-
-
-
-
+            this.StorageLastChecked = DateTime.UtcNow;
             this.zzDebug = "sdfdf";
         }
 
-
+        /// <summary>
+        /// Collect information about all drives in running system.
+        /// </summary>
         private void CollecNodesDriveInformation()
         {
+            if (this._node.DrivesInformation.CheckedIsRunning)
+            {
+                return;
+            }
+
+            this._node.DrivesInformation.CheckedIsRunning = true;
+
             var tmpDriveInfo = LiTools.Helpers.IO.Drives.GetDrivesInformation(true, true);
             foreach (var di in tmpDriveInfo)
             {
-                if (this._node.DrivesInformation.ContainsKey(di.Name))
+                if (this._node.DrivesInformation.Drive.ContainsKey(di.Name))
                 {
                     // Already exist. Check data inside of model
-                    this._node.DrivesInformation[di.Name].DtLastChecked = DateTime.UtcNow;
+                    this._node.DrivesInformation.Drive[di.Name].DtLastChecked = DateTime.UtcNow;
 
-                    if (this._node.DrivesInformation[di.Name].Data.IsReady != di.IsReady ||
-                        this._node.DrivesInformation[di.Name].Data.AvailableFreeSpace != di.AvailableFreeSpace ||
-                        this._node.DrivesInformation[di.Name].Data.DriveFormat != di.DriveFormat ||
-                        this._node.DrivesInformation[di.Name].Data.DriveType != di.DriveType ||
-                        this._node.DrivesInformation[di.Name].Data.TotalFreeSpace != di.TotalFreeSpace ||
-                        this._node.DrivesInformation[di.Name].Data.TotalSize != di.TotalSize ||
-                        this._node.DrivesInformation[di.Name].Data.VolumeLabel != di.VolumeLabel)
+                    if (this._node.DrivesInformation.Drive[di.Name].Data.IsReady != di.IsReady ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.AvailableFreeSpace != di.AvailableFreeSpace ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.DriveFormat != di.DriveFormat ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.DriveType != di.DriveType ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.TotalFreeSpace != di.TotalFreeSpace ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.TotalSize != di.TotalSize ||
+                        this._node.DrivesInformation.Drive[di.Name].Data.VolumeLabel != di.VolumeLabel)
                     {
-                        this._node.DrivesInformation[di.Name].Data = di;
-                        this._node.DrivesInformation[di.Name].ContainNewData = true;
+                        this._node.DrivesInformation.Drive[di.Name].Data = di;
+                        this._node.DrivesInformation.Drive[di.Name].ContainNewData = true;
 
-                        this._node.DrivesInformation[di.Name].DtLastUpdated = DateTime.UtcNow;
+                        this._node.DrivesInformation.Drive[di.Name].DtLastUpdated = DateTime.UtcNow;
                     }
                 }
                 else
                 {
-                    this._node.DrivesInformation.Add(di.Name, new RundataNodeServiceDrivesInformationModel()
+                    this._node.DrivesInformation.Drive.Add(di.Name, new RundataNodeServiceDrivesInformationDictModel()
                     {
                         ContainNewData = true,
                         Data = di,
@@ -144,18 +253,60 @@ namespace LiStorage.Services.Node
 
                 this.zzDebug = "dsfd";
             }
+
+            this._node.DrivesInformation.LastChecked = DateTime.UtcNow;
+            this._node.DrivesInformation.CheckedIsRunning = false;
         }
 
+        private void NodesDriveInformationDataChangeHandler()
+        {
+            foreach (var drive in this._node.DrivesInformation.Drive)
+            {
+                if (drive.Value.ContainNewData)
+                {
+                    // This drive has new information
+                    // .
+                    //var dd = this._node.Storage;
+
+                    List<StoragePoolModel> tmpMatchStorage = new List<StoragePoolModel>();
+
+                    // var tmpMatchStorage = this._node.Storage.Values.Where(x => x.Filedata.FolderPath.ToLower().StartsWith(drive.Value.Data.Name.ToLower())).ToList();
+                    lock (this._lockKey)
+                    {
+                        tmpMatchStorage = this.Storage.Values.Where(x => x.Filedata.FolderPath.ToLower().StartsWith(drive.Value.Data.Name.ToLower())).ToList();
+                    }
+
+                    if (tmpMatchStorage.Count > 0)
+                    {
+                        foreach (var stg in tmpMatchStorage)
+                        {
+                            stg.SpaceFreeInMbytes = (ulong)LiTools.Helpers.Convert.Bytes.To(FileSizeEnums.Megabytes, drive.Value.Data.AvailableFreeSpace);
+                            stg.SpaceFreeCollected = true;
+                        }
+
+                        this.zzDebug = "dsfdsf";
+                    }
+
+                    drive.Value.ContainNewData = false;
+                    this.zzDebug = "sdfsd";
+                }
+            }
+
+            this.zzDebug = "sdfsd";
+
+        }
+
+        [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:BracesMustNotBeOmitted", Justification = "Reviewed.")]
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]
         private bool DoInitOnStoragePool(string stgId)
         {
-            if (!this._node.Storage.ContainsKey(stgId))
+            if (!this.Storage.ContainsKey(stgId))
             {
                 // StoragePool dont exist
                 return false;
             }
 
-            StoragePoolModel stg = this._node.Storage[stgId];
+            StoragePoolModel stg = this.Storage[stgId];
 
             if (!stg.Filedata.Enabled)
             {
@@ -176,7 +327,7 @@ namespace LiStorage.Services.Node
             // Do file storage pool config file exist in directory
             if (!this._fileOperation.FileExists($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
             {
-                // StoragePool config file dont exist. Create default configfile and save 
+                // StoragePool config file dont exist. Create default configfile and save.
 
                 // Generate default storage config file.
                 stg.ConfigData = LiStorage.Helpers.Configuration.ConfigFileNodeHelper.NodeConfigStoragePoolConfigFile(5, 40);
@@ -185,18 +336,21 @@ namespace LiStorage.Services.Node
                 // Convert to json
                 var tmpconfigFileAsJson = Helpers.CommonHelper.SerializeJson(stg.ConfigData, true);
 
-                // Save file.
-                if (!this._fileOperation.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
+                if (tmpconfigFileAsJson != null)
                 {
-                    // Error saving the file.
-                    stg.Status = StoragePoolStatusEnum.FileMissing;
-                    stg.InitDone = true;
+                    // Save file.
+                    if (!this._fileOperation.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
+                    {
+                        // Error saving the file.
+                        stg.Status = StoragePoolStatusEnum.FileMissing;
+                        stg.InitDone = true;
 
-                    this.zzDebug = "dfdsf";
-                    return false;
+                        this.zzDebug = "dfdsf";
+                        if (System.Diagnostics.Debugger.IsAttached)
+                            System.Diagnostics.Debugger.Break();
+                        return false;
+                    }
                 }
-
-                this.zzDebug = "sdfdsf";
             }
 
             // Read storage config file from storage pool volume
@@ -282,18 +436,21 @@ namespace LiStorage.Services.Node
             // var dd3 = this._fileOperation.DirectoryGetSize(@"E:\games", true, FileSizeEnums.Megabytes);
             this.zzDebug = "sfdsf";
 
-            return false;
+            stg.InitDone = true;
+            stg.Status = StoragePoolStatusEnum.Working;
+            return true;
         }
 
         private ulong GetUsedSpaceInMegabyte(string stgId)
         {
-            if (!this._node.Storage.ContainsKey(stgId))
+            if (!this.ContainsKey(stgId))
             {
                 // Storage pool dont exist.
                 return 0;
             }
 
-            var dd1 = this._fileOperation.DirectoryGetSize(this._node.Storage[stgId].Filedata.FolderPath, true, FileSizeEnums.Bytes);
+            var dd1 = this._fileOperation.DirectoryGetSize(this.Get(stgId).Filedata.FolderPath, true, FileSizeEnums.Bytes);
+            // var dd1 = this._fileOperation.DirectoryGetSize(this._node.Storage[stgId].Filedata.FolderPath, true, FileSizeEnums.Bytes);
 
             // Do folder conatin data?
             if (dd1 <= 100)
@@ -311,15 +468,11 @@ namespace LiStorage.Services.Node
 
             // ulong vOut = Convert.ToUInt64(tmpReturn);
 
-
             return Convert.ToUInt64(tmpReturn);
         }
 
-        private void GetFreeSpaceOnDrives()
-        {
 
-            
+       
 
-        }
     }
 }

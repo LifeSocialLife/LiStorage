@@ -1,18 +1,23 @@
-using LiStorage.Services;
-using LiStorage.Services.Node;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+// <copyright file="Startup.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
 
 namespace LiStorageNode
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using LiStorage.Services;
+    using LiStorage.Services.Node;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.HttpsPolicy;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -23,6 +28,7 @@ namespace LiStorageNode
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]
         public void ConfigureServices(IServiceCollection services) // , IWebHostEnvironment env)
         {
 
@@ -34,19 +40,20 @@ namespace LiStorageNode
 
             var tmpRundata = new RundataService()
             {
-                
                 // Platform = PlatformEnum.None,
             };
 
-            tmpRundata.Folders.PathRuntimes = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
-            
+            tmpRundata.Folders.PathRuntimes = this.Configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
+
             services.AddSingleton(tmpRundata);
 
             #endregion
 
             services.AddSingleton<RundataNodeService>();
+            services.AddSingleton<CollectionService>();
             services.AddSingleton<StoragePoolService>();
-
+            services.AddSingleton<BlockStorageService>();
+            services.AddSingleton<NodeHttpService>();
 
             services.AddRazorPages();
 

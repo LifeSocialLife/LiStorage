@@ -21,20 +21,18 @@ namespace LiStorage.Services.Node
     /// </summary>
     public class NodeWorker : BackgroundService
     {
-        // [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
-
-        private string zzDebug { get; set; }
-
 #pragma warning disable SA1309 // FieldNamesMustNotBeginWithUnderscore
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
+
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed.")]
         private readonly ILogger<NodeWorker> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
+        private readonly CollectionService _collections;
         private readonly StoragePoolService _storagepool;
+        private readonly BlockStorageService _objectStorage;
+        private readonly NodeHttpService _httpserver;
 #pragma warning restore SA1309 // FieldNamesMustNotBeginWithUnderscore
 
         /// <summary>
@@ -46,7 +44,11 @@ namespace LiStorage.Services.Node
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
         /// <param name="storagePoolService">StoragePoolService.</param>
-        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService)
+        /// <param name="fileStorageService">FileStorageService.</param>
+        /// <param name="objectStorageService">ObjectStorageService.</param>
+        /// <param name="nodeHttpService">NodeHttpService.</param>
+        /// <param name="collectionService">CollectionService.</param>
+        public NodeWorker(ILogger<NodeWorker> logger, IHostApplicationLifetime hostappLifetime, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, BlockStorageService objectStorageService, NodeHttpService nodeHttpService, CollectionService collectionService)
         {
             this.zzDebug = "NodeWorker";
 
@@ -57,7 +59,16 @@ namespace LiStorage.Services.Node
             this._node = rundataNode;
             this._fileOperation = fileOperation;
             this._storagepool = storagePoolService;
+            this._objectStorage = objectStorageService;
+            this._httpserver = nodeHttpService;
+            this._collections = collectionService;
         }
+
+        // [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+
+        private string zzDebug { get; set; }
 
         /// <inheritdoc/>
         public override async Task StopAsync(CancellationToken cancellationToken)
@@ -110,14 +121,26 @@ namespace LiStorage.Services.Node
                 this._node.StartUpStatus.ConfigFileExist = Models.Rundata.NodeStartUpStatusEnum.Error;
             }
 
-            var ddd = this._rundata;
-
-            this._storagepool.CheckStoragePool();
-
+            // var ddd = this._rundata;
             this.zzDebug = "sdfdf";
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                // Check storage pools.
+                this._storagepool.CheckStoragePools();
+
+
+                //this._fileStorage.CheckCollections();
+
+                // Start watson webserver
+                // var dd = this._node.Collections;
+                this.zzDebug = "Sfsdf";
+
+                if (!this._httpserver.IsRunning)
+                {
+                    this._httpserver.StartWebserver();
+                }
+
                 // _logger.LogInformation($"Background service running :: {stoppingToken.IsCancellationRequested}");
                 await Task.Delay(2000, stoppingToken);
             }
@@ -211,6 +234,7 @@ namespace LiStorage.Services.Node
                 // This is a version 1 import.
                 this._node.ConfigFileData.NodeName = tmpModel.NodeName;
                 this._node.ConfigFileData.ClusterKey = tmpModel.ClusterKey;
+                this._node.ConfigFileData.HeaderApiKey = tmpModel.HeaderApiKey;
 
                 #region Import masters
 
@@ -246,12 +270,14 @@ namespace LiStorage.Services.Node
                             continue;
                         }
 
-                        if (this._node.Collections.ContainsKey(collection.Id + "-default"))
+                        // if (this._node.Collections.ContainsKey(collection.Id + "-default"))
+                        if (this._collections.ContainsKey(collection.Id + "-default"))
                         {
                             continue;       // This collection already exist
                         }
 
-                        this._node.Collections.Add(collection.Id + "-default", new RundataNodeServiceCollectionModel()
+
+                        this._collections.Add(collection.Id + "-default", new RundataNodeServiceCollectionModel()
                         {
                             Filedata = collection,
                         });
@@ -260,12 +286,12 @@ namespace LiStorage.Services.Node
                         {
                             foreach (var area in collection.Areas)
                             {
-                                if (this._node.Collections.ContainsKey(collection.Id + "-" + area.Id))
+                                if (this._collections.ContainsKey(collection.Id + "-" + area.Id))
                                 {
                                     continue;       // This collection already exist
                                 }
 
-                                this._node.Collections.Add(collection.Id + "-" + area.Id, new RundataNodeServiceCollectionModel()
+                                this._collections.Add(collection.Id + "-" + area.Id, new RundataNodeServiceCollectionModel()
                                 {
                                     Filedata = area,
                                 });
@@ -287,12 +313,12 @@ namespace LiStorage.Services.Node
                             continue;
                         }
 
-                        if (this._node.Storage.ContainsKey(storage.Id))
+                        if (this._storagepool.ContainsKey(storage.Id))
                         {
                             continue;  // Already exist
                         }
 
-                        this._node.Storage.Add(storage.Id, new StoragePoolModel()
+                        this._storagepool.Add(storage.Id, new StoragePoolModel()
                         {
                             Filedata = storage,
                         });
