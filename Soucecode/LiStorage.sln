@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorageNode", "LiStorageN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Services", "LiStorage.Services\LiStorage.Services.csproj", "{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Testing", "1.Testing", "{706D586E-57D7-4B41-B11A-119355EB3C45}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestingTemp", "TestingTemp", "{706D586E-57D7-4B41-B11A-119355EB3C45}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorage.Models", "LiStorage.Models\LiStorage.Models.csproj", "{729BEF25-F3B8-44F9-B62F-C9ED22922D63}"
 EndProject
@@ -18,6 +18,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiTools.Helpers.IO", "..\..\LiTools\LiTools.Helpers.IO\LiTools.Helpers.IO.csproj", "{841C0BBB-DC6D-4F56-A45B-6FB7ED51190C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiTools.Helpers.Convert", "..\..\LiTools\LiTools.Helpers.Convert\LiTools.Helpers.Convert.csproj", "{9B8CF5B1-172F-40CC-B923-941D62F34057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiStorage.Gui", "LiStorage.Gui\LiStorage.Gui.csproj", "{87B85A20-D55B-41DA-B977-162A048306B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiStorage", "LiStorage\LiStorage.csproj", "{6295771A-39B0-4170-B407-DF1D30B6B9A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Starters", "Starters", "{C726A371-621F-441F-8386-E8C477C8DAD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2535A9A3-4E2E-492C-82F9-7C1781AB40BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old", "Old", "{6E87497F-B5D0-4977-A1C9-31EED7DB61F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,13 +59,24 @@ Global
 		{9B8CF5B1-172F-40CC-B923-941D62F34057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B8CF5B1-172F-40CC-B923-941D62F34057}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8CF5B1-172F-40CC-B923-941D62F34057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B85A20-D55B-41DA-B977-162A048306B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B85A20-D55B-41DA-B977-162A048306B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B85A20-D55B-41DA-B977-162A048306B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B85A20-D55B-41DA-B977-162A048306B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6295771A-39B0-4170-B407-DF1D30B6B9A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6295771A-39B0-4170-B407-DF1D30B6B9A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6295771A-39B0-4170-B407-DF1D30B6B9A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6295771A-39B0-4170-B407-DF1D30B6B9A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{9B2E07D5-AA69-416A-9F93-BE31F325455C} = {6E87497F-B5D0-4977-A1C9-31EED7DB61F5}
 		{841C0BBB-DC6D-4F56-A45B-6FB7ED51190C} = {AE6BB7EA-1EFE-416E-8D09-174D00552E25}
 		{9B8CF5B1-172F-40CC-B923-941D62F34057} = {AE6BB7EA-1EFE-416E-8D09-174D00552E25}
+		{87B85A20-D55B-41DA-B977-162A048306B9} = {C726A371-621F-441F-8386-E8C477C8DAD0}
+		{6295771A-39B0-4170-B407-DF1D30B6B9A9} = {C726A371-621F-441F-8386-E8C477C8DAD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59E8829D-A2BF-4DE2-93BA-9E57FD62429E}
