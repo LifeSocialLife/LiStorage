@@ -1,14 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <UserSecretsId>4fd5eb0e-eef8-4ead-9e3d-0ad1b8f5949c</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.11.0-1.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0-1.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0-1.final" />
@@ -18,8 +15,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Watson" Version="4.2.0.1" />
-    <PackageReference Include="WatsonTcp" Version="4.8.6" />
   </ItemGroup>
 
   <ItemGroup>
