@@ -23,7 +23,7 @@ namespace LiStorage.Services.Node
     {
 #pragma warning disable SA1309 // FieldNamesMustNotBeginWithUnderscore
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed.")]
+        // [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed.")]
         private readonly ILogger<NodeWorker> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly RundataService _rundata;

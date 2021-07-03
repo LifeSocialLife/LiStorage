@@ -1,43 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
-using WatsonTcp;
+﻿// <copyright file="LiLogService.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
 
 namespace LiLog.Client
 {
+    using LiLog.Client.Models;
+    using Microsoft.Extensions.Hosting;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Text;
+    using System.Xml.Serialization;
+    using WatsonTcp;
+
     public class LiLogService
     {
-        private WatsonTcpClient _Client = null;
-
+#pragma warning disable SA1309 // FieldNamesMustNotBeginWithUnderscore
+        private readonly IHostApplicationLifetime _hostApplicationLifetime;
+        private WatsonTcpClient _client;
         private string _ServerIp = "172.16.100.88";
         private int _ServerPort = 9000;
         private static string _PresharedKey = null;
+#pragma warning restore SA1309 // FieldNamesMustNotBeginWithUnderscore
 
-        public LiLogService()
+        private ServerConnectionModel ServerSettings { get; set; }
+
+        private bool ServerSettingsExist { get; set; }
+
+        public LiLogService(IHostApplicationLifetime hostApplicationLifetime)
         {
+            this._hostApplicationLifetime = hostApplicationLifetime;
+            this._hostApplicationLifetime.ApplicationStarted.Register(this.OnStarted, true);
+            this._hostApplicationLifetime.ApplicationStopping.Register(this.OnStopping, true);
+            this._hostApplicationLifetime.ApplicationStopped.Register(this.OnStopped, true);
 
+            this.ServerSettings = new ServerConnectionModel();
+            this.ServerSettingsExist = false;
+            this.zzDebug = "LiLogService";
         }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+
+        private string zzDebug { get; set; }
+
 
         public void Init()
         {
-            _Client = new WatsonTcpClient(_ServerIp, _ServerPort);
+            this._client = new WatsonTcpClient(_ServerIp, _ServerPort);
 
-            _Client.Events.AuthenticationFailure += AuthenticationFailure;
-            _Client.Events.AuthenticationSucceeded += AuthenticationSucceeded;
-            _Client.Events.ServerConnected += ServerConnected;
-            _Client.Events.ServerDisconnected += ServerDisconnected;
-            _Client.Events.MessageReceived += MessageReceived;
+            this._client.Events.AuthenticationFailure += AuthenticationFailure;
+            this._client.Events.AuthenticationSucceeded += AuthenticationSucceeded;
+            this._client.Events.ServerConnected += ServerConnected;
+            this._client.Events.ServerDisconnected += ServerDisconnected;
+            this._client.Events.MessageReceived += MessageReceived;
 
-            _Client.Callbacks.SyncRequestReceived = SyncRequestReceived;
-            _Client.Callbacks.AuthenticationRequested = AuthenticationRequested;
+            this._client.Callbacks.SyncRequestReceived = SyncRequestReceived;
+            this._client.Callbacks.AuthenticationRequested = AuthenticationRequested;
 
-            _Client.Keepalive.EnableTcpKeepAlives = true;
-            _Client.Keepalive.TcpKeepAliveInterval = 1;
-            _Client.Keepalive.TcpKeepAliveTime = 1;
-            _Client.Keepalive.TcpKeepAliveRetryCount = 3;
+            this._client.Keepalive.EnableTcpKeepAlives = true;
+            this._client.Keepalive.TcpKeepAliveInterval = 1;
+            this._client.Keepalive.TcpKeepAliveTime = 1;
+            this._client.Keepalive.TcpKeepAliveRetryCount = 3;
 
-            _Client.Connect();
+            this._client.Connect();
 
         }
 
@@ -51,6 +78,35 @@ namespace LiLog.Client
             
 
         }
+
+        private void OnStarted()
+        {
+            //this._logger.LogInformation("OnStarted has been called.");
+
+            this.zzDebug = "sdfdf";
+
+            // Perform post-startup activities here
+        }
+
+        private void OnStopping()
+        {
+            //this._logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work.");
+            //this._logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work. | Done");
+
+            // _logger.LogInformation("OnStopping has been called.");
+            this.zzDebug = "sdfdf";
+
+            // Perform on-stopping activities here
+        }
+
+        private void OnStopped()
+        {
+            // Perform post-stopped activities here
+            // this._logger.LogInformation("OnStopped has been called.");
+
+            this.zzDebug = "sdfdf";
+        }
+
         private static string AuthenticationRequested()
         {
             // return "0000000000000000";
