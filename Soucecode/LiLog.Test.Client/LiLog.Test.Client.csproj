@@ -24,4 +24,8 @@
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LiLog.Client\LiLog.Client.csproj" />
+  </ItemGroup>
+
 </Project>

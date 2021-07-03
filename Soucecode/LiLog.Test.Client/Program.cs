@@ -1,3 +1,4 @@
+using LiLog.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -18,6 +19,7 @@ namespace LiLog.Test.Client
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddSingleton<LiLogService>();
                     services.AddHostedService<Worker>();
                 });
     }

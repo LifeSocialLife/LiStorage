@@ -1,3 +1,4 @@
+using LiLog.Client;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,17 +12,27 @@ namespace LiLog.Test.Client
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private readonly LiLogService _liLog;
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, LiLogService liLogService)
         {
             _logger = logger;
+            this._liLog = liLogService;
+
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+
+            this._liLog.Init();
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                string test = $"Worker running at: {DateTime.UtcNow}";
+
+                this._liLog.send(test);
+
+                // _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 try
                 {
                     await Task.Delay(1000, stoppingToken);
