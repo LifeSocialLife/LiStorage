@@ -25,7 +25,7 @@ namespace LiLog.Server.Data
     {
 #pragma warning disable SA1309 // FieldNamesMustNotBeginWithUnderscore
         private readonly ILogger<BgWorkerService> _logger;
-
+        private readonly TcpServerService _tcpServer;
         // private readonly RundataService _rundata;
         private readonly IConfiguration _configuration;
 #pragma warning restore SA1309 // FieldNamesMustNotBeginWithUnderscore
@@ -35,12 +35,14 @@ namespace LiLog.Server.Data
         /// </summary>
         /// <param name="logger">ILogger.</param>
         /// <param name="configuration">IConfiguration.</param>
-        public BgWorkerService(ILogger<BgWorkerService> logger, IConfiguration configuration)
+        public BgWorkerService(ILogger<BgWorkerService> logger, IConfiguration configuration, TcpServerService tcpServer)
         {
             this.zzDebug = "Worker";
 
             this._logger = logger;
             this._configuration = configuration;
+            this._tcpServer = tcpServer;
+
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
@@ -56,9 +58,14 @@ namespace LiLog.Server.Data
 
             this.zzDebug = "dfdsf";
 
+            this._tcpServer.StartServer();
+
+
+            this.zzDebug = "dfdsf";
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                this._logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                // this._logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 try
                 {
                     await Task.Delay(1000, stoppingToken);

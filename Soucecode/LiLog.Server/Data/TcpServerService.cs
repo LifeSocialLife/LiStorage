@@ -17,32 +17,36 @@ namespace LiLog.Server.Data
     public class TcpServerService
     {
 #pragma warning disable SA1309 // FieldNamesMustNotBeginWithUnderscore
-        private readonly WatsonTcpServer _Server; // = null;
+        private WatsonTcpServer _Server; // = null;
 #pragma warning restore SA1309 // FieldNamesMustNotBeginWithUnderscore
 
 
 
         public TcpServerService()
         {
-
+            this._Server = new WatsonTcpServer("0.0.0.0", 9000);
         }
 
         public void StartServer()
         {
-            WatsonTcpServer server = new WatsonTcpServer("127.0.0.1", 9000);
-            server.Events.ClientConnected += ClientConnected;
-            server.Events.ClientDisconnected += ClientDisconnected;
-            server.Events.MessageReceived += MessageReceived;
+            this._Server = new WatsonTcpServer(null, 9000);
+            this._Server.Events.ClientConnected += ClientConnected;
+            this._Server.Events.ClientDisconnected += ClientDisconnected;
+            this._Server.Events.MessageReceived += MessageReceived;
 
-            _Server.Events.ServerStarted += ServerStarted;
-            _Server.Events.ServerStopped += ServerStopped;
+            this._Server.Events.ServerStarted += ServerStarted;
+            this._Server.Events.ServerStopped += ServerStopped;
 
-            _Server.Callbacks.SyncRequestReceived = SyncRequestReceived;
+            this._Server.Callbacks.SyncRequestReceived = SyncRequestReceived;
 
-            server.Start();
+            this._Server.Start();
 
         }
 
+        private void SendToClient()
+        {
+            //this._Server.Send()
+        }
         static void ClientConnected(object sender, ConnectionEventArgs args)
         {
             Console.WriteLine("Client connected: " + args.IpPort);
@@ -53,9 +57,10 @@ namespace LiLog.Server.Data
             Console.WriteLine("Client disconnected: " + args.IpPort + ": " + args.Reason.ToString());
         }
 
-        static void MessageReceived(object sender, MessageReceivedEventArgs args)
+        private void MessageReceived(object sender, MessageReceivedEventArgs args)
         {
             Console.WriteLine("Message from " + args.IpPort + ": " + Encoding.UTF8.GetString(args.Data));
+            // _Server.cli
         }
 
         private static void ServerStarted(object sender, EventArgs args)

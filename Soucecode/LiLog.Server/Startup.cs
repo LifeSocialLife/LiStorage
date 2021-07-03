@@ -36,6 +36,8 @@ namespace LiLog.Server
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            
+            services.AddSingleton<TcpServerService>();
 
             services.AddHostedService<BgWorkerService>();
 
