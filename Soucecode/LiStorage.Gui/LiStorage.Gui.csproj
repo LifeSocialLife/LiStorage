@@ -28,6 +28,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\LiStorage.Services\LiStorage.Services.csproj" />
     <ProjectReference Include="..\LiStorage\LiStorage.csproj" />
     
   </ItemGroup>
