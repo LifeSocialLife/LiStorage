@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiLog.Client", "LiLog.Clien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiLog.Models", "LiLog.Models\LiLog.Models.csproj", "{C8C1D2A9-F3A2-4CA8-8609-CD102CF9FF60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiLog.Test.Client", "LiLog.Test.Client\LiLog.Test.Client.csproj", "{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{C8C1D2A9-F3A2-4CA8-8609-CD102CF9FF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8C1D2A9-F3A2-4CA8-8609-CD102CF9FF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8C1D2A9-F3A2-4CA8-8609-CD102CF9FF60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{41BB1B66-2696-4140-A297-5BEBD6446E73} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
 		{8B234AAE-274D-4952-B2FE-1F95F4A94B69} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
 		{C8C1D2A9-F3A2-4CA8-8609-CD102CF9FF60} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
+		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59E8829D-A2BF-4DE2-93BA-9E57FD62429E}
