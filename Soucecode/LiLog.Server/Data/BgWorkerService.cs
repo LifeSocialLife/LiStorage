@@ -60,7 +60,6 @@ namespace LiLog.Server.Data
 
             this._tcpServer.StartServer();
 
-
             this.zzDebug = "dfdsf";
 
             while (!stoppingToken.IsCancellationRequested)

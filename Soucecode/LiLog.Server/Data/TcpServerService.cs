@@ -30,7 +30,7 @@ namespace LiLog.Server.Data
         public void StartServer()
         {
             this._Server = new WatsonTcpServer(null, 9000);
-            this._Server.Events.ClientConnected += ClientConnected;
+            this._Server.Events.ClientConnected += this.ClientConnected;
             this._Server.Events.ClientDisconnected += ClientDisconnected;
             this._Server.Events.MessageReceived += MessageReceived;
 
@@ -47,7 +47,13 @@ namespace LiLog.Server.Data
         {
             //this._Server.Send()
         }
-        static void ClientConnected(object sender, ConnectionEventArgs args)
+
+        /// <summary>
+        /// New client has connected to server.
+        /// </summary>
+        /// <param name="sender">object.</param>
+        /// <param name="args">ConnectionEventArgs.</param>
+        private void ClientConnected(object? sender, ConnectionEventArgs args)
         {
             Console.WriteLine("Client connected: " + args.IpPort);
         }
