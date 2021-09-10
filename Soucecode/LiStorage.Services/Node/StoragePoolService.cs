@@ -316,7 +316,8 @@ namespace LiStorage.Services.Node
             }
 
             // Check that directory exist.
-            if (!this._fileOperation.DirectoryExist(stg.Filedata.FolderPath))
+            // if (!this._fileOperation.DirectoryExist(stg.Filedata.FolderPath))
+            if (LiTools.Helpers.IO.Directory.Exist(stg.Filedata.FolderPath))
             {
                 // Directory dont exist.
                 stg.Status = StoragePoolStatusEnum.Error;
@@ -325,7 +326,8 @@ namespace LiStorage.Services.Node
             }
 
             // Do file storage pool config file exist in directory
-            if (!this._fileOperation.FileExists($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
+            // if (!this._fileOperation.FileExists($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
+            if (!LiTools.Helpers.IO.File.Exist($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
             {
                 // StoragePool config file dont exist. Create default configfile and save.
 
@@ -339,7 +341,8 @@ namespace LiStorage.Services.Node
                 if (tmpconfigFileAsJson != null)
                 {
                     // Save file.
-                    if (!this._fileOperation.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
+                    // if (!this._fileOperation.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
+                    if (!LiTools.Helpers.IO.File.WriteFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg", tmpconfigFileAsJson, false))
                     {
                         // Error saving the file.
                         stg.Status = StoragePoolStatusEnum.FileMissing;
@@ -354,14 +357,17 @@ namespace LiStorage.Services.Node
             }
 
             // Read storage config file from storage pool volume
-            var tmpConfigFileAsString = this._fileOperation.ReadTextFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg");
+            // var tmpConfigFileAsString = this._fileOperation.ReadTextFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg");
+            var tmpConfigFilReadData = LiTools.Helpers.IO.File.ReadTextFile($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg");
 
-            if (string.IsNullOrEmpty(tmpConfigFileAsString))
+            if ((!tmpConfigFilReadData.Item1) || string.IsNullOrEmpty(tmpConfigFilReadData.Item2))
             {
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
                 return false;
             }
+
+            string tmpConfigFileAsString = tmpConfigFilReadData.Item2;
 
             // Get Version of configfile.
             var tmpVersionFromString = LiStorage.Helpers.CommonHelper.GetValueFromJsonStringReturnAsUshort(tmpConfigFileAsString, "Version");
@@ -398,8 +404,18 @@ namespace LiStorage.Services.Node
 
             #region Create data and meta folder in stg folderpath if the dont exist And shod exist.
 
-            var aa = this._fileOperation.GetSubdirectoryList(stg.Filedata.FolderPath, false);
+            // var aa = this._fileOperation.GetSubdirectoryList(stg.Filedata.FolderPath, false);
+            var aaGetData = LiTools.Helpers.IO.Directory.GetSubdirectoryList(stg.Filedata.FolderPath, false);
 
+            if (!aaGetData.Item1)
+            {
+                // Error read folders
+                stg.Status = StoragePoolStatusEnum.Error;
+                stg.InitDone = true;
+                return false;
+            }
+
+            var aa = aaGetData.Item2;
             var dirData = aa.FindAll(s => s.IndexOf("data", StringComparison.OrdinalIgnoreCase) >= 0);
             var dirMeta = aa.FindAll(s => s.IndexOf("meta", StringComparison.OrdinalIgnoreCase) >= 0);
 
@@ -408,7 +424,8 @@ namespace LiStorage.Services.Node
             if ((dirMeta.Count == 0) && stg.ConfigData.AllowMeta)
             {
                 // Meta dont exist. shod it exist.
-                if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\meta"))
+                // if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\meta"))
+                if (!LiTools.Helpers.IO.Directory.DirectoryCreate($"{stg.Filedata.FolderPath}\\meta"))
                 {
                     // Error creating meta folder
                     stg.Status = StoragePoolStatusEnum.Error;
@@ -420,7 +437,8 @@ namespace LiStorage.Services.Node
             if (dirData.Count == 0 && stg.ConfigData.AllowData)
             {
                 // Meta dont exist. shod it exist.
-                if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\data"))
+                // if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\data"))
+                if (!LiTools.Helpers.IO.Directory.DirectoryCreate($"{stg.Filedata.FolderPath}\\data"))
                 {
                     // Error creating meta folder
                     stg.Status = StoragePoolStatusEnum.Error;
@@ -449,8 +467,9 @@ namespace LiStorage.Services.Node
                 return 0;
             }
 
-            var dd1 = this._fileOperation.DirectoryGetSize(this.Get(stgId).Filedata.FolderPath, true, FileSizeEnums.Bytes);
             // var dd1 = this._fileOperation.DirectoryGetSize(this._node.Storage[stgId].Filedata.FolderPath, true, FileSizeEnums.Bytes);
+            // var dd1 = this._fileOperation.DirectoryGetSize(this.Get(stgId).Filedata.FolderPath, true, FileSizeEnums.Bytes);
+            var dd1 = LiTools.Helpers.IO.Directory.DirectoryGetSize(this.Get(stgId).Filedata.FolderPath, true, FileSizeEnums.Bytes);
 
             // Do folder conatin data?
             if (dd1 <= 100)
@@ -470,9 +489,5 @@ namespace LiStorage.Services.Node
 
             return Convert.ToUInt64(tmpReturn);
         }
-
-
-       
-
     }
 }

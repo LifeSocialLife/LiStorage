@@ -103,10 +103,10 @@ namespace LiStorage.Services.Node
 
             #region DEV - Create configfile for dev node
 
-            // var gg = LiStorage.Helpers.Configuration.ConfigFileNodeHelper.CreateTemplate();
-            // var a1 = Helpers.CommonHelper.SerializeJson(gg, true);
-            // this.zzDebug = "sdfdf";
-            // this._fileOperation.WriteFile(this._rundata.Folders.ConfigFile, a1, false);
+            //// var gg = LiStorage.Helpers.Configuration.ConfigFileNodeHelper.CreateTemplate();
+            //var a1 = Helpers.CommonHelper.SerializeJson(gg, true);
+            //// this.zzDebug = "sdfdf";
+            //this._fileOperation.WriteFile(this._rundata.Folders.ConfigFile, a1, false);
             #endregion
 
             this.zzDebug = "sdfdf";
@@ -153,7 +153,19 @@ namespace LiStorage.Services.Node
         {
             // Read data from configfile
             this._node.StartUpStatus.ConfigFileRead = Models.Rundata.NodeStartUpStatusEnum.Running;
-            var tmpConfigFileAsString = this._fileOperation.ReadTextFile(this._rundata.Folders.ConfigFile);
+
+            // Old code befor moving to helper.
+            // var tmpConfigFileAsString = this._fileOperation.ReadTextFile(this._rundata.Folders.ConfigFile);
+            var tmpConfigFileReadData = LiTools.Helpers.IO.File.ReadTextFile(this._rundata.Folders.ConfigFile);
+
+            if ((!tmpConfigFileReadData.Item1) || string.IsNullOrEmpty(tmpConfigFileReadData.Item2))
+            {
+                // Error reading file.
+                this._node.StartUpStatus.ConfigFileRead = Models.Rundata.NodeStartUpStatusEnum.Error;
+                return;
+            }
+
+            string tmpConfigFileAsString = tmpConfigFileReadData.Item2;
 
             if (string.IsNullOrEmpty(tmpConfigFileAsString))
             {

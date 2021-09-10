@@ -70,9 +70,9 @@ namespace LiLog.Client
 
         public void send(string text)
         {
-            if (this._Client.Connected)
+            if (this._client.Connected)
             {
-                if (!_Client.Send(Encoding.UTF8.GetBytes(text))) Console.WriteLine("Failed");
+                if (!_client.Send(Encoding.UTF8.GetBytes(text))) Console.WriteLine("Failed");
             }
             // userInput = InputString("Data:", null, false);
             
