@@ -33,9 +33,9 @@ namespace LiStorage.Models.Rundata
         /// </summary>
         public NodeStartUpStatusModel()
         {
-            this.Configfile = NodeStartUpStatusEnum.Notstarted;
+            this.ConfigFile = NodeStartUpStatusEnum.Notstarted;
             this.ConfigFileExist = false;
-
+            this.ConfigFileLastError = string.Empty;
             /*
             //this.ConfigFileExist = NodeStartUpStatusEnum.Notstarted;
             //this.ConfigFileRead = NodeStartUpStatusEnum.Notstarted;
@@ -46,12 +46,17 @@ namespace LiStorage.Models.Rundata
         /// <summary>
         /// Gets or sets configfile status. see NodeStartUpStatusEnum  ex: Notstarted = 0, Running = 1, Error = 2, Done = 3.
         /// </summary>
-        public NodeStartUpStatusEnum Configfile { get; set; }
+        public NodeStartUpStatusEnum ConfigFile { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether configfile exist in node.
         /// </summary>
         public bool ConfigFileExist { get; set; }
+
+        /// <summary>
+        /// Gets or sets if error exist. what was the last error.
+        /// </summary>
+        public string ConfigFileLastError { get; set; }
 
         /*
         //public NodeStartUpStatusEnum ConfigFileRead { get; set; }
