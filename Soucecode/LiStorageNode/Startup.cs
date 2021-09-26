@@ -1,6 +1,10 @@
+// <summary>
+// {one line to give the library's name and an idea of what it does.}
+// </summary>
 // <copyright file="Startup.cs" company="LiSoLi">
 // Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorageNode
 {
