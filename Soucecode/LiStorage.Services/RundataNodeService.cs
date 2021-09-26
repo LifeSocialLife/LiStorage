@@ -1,6 +1,10 @@
-﻿// <copyright file="RundataNodeService.cs" company="LiSoLi">
+﻿// <summary>
+// {one line to give the library's name and an idea of what it does.}
+// </summary>
+// <copyright file="RundataNodeService.cs" company="LiSoLi">
 // Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Services
 {
@@ -24,19 +28,21 @@ namespace LiStorage.Services
         /// </summary>
         public RundataNodeService() // FileOperationService fileOperation)
         {
-            // this._fileOperation = fileOperation;
             this.Masters = new Dictionary<string, RundataNodeServiceMastersModel>();
-            // this.Collections = new Dictionary<string, RundataNodeServiceCollectionModel>();
-            //this.Storage = new Dictionary<string, StoragePoolModel>();
-            // this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
-            
             this.StartUpStatus = new NodeStartUpStatusModel();
             this.ConfigFileData = new RundataNodeServiceConfigFileDataModel();
             this.DrivesInformation = new RundataNodeServiceDrivesInformationModel();
             this.zzDebug = "RundataNodeService";
 
+            /* Old code. dont know if this shod be used more.
+            // this._fileOperation = fileOperation;
+            // this.Collections = new Dictionary<string, RundataNodeServiceCollectionModel>();
+            //this.Storage = new Dictionary<string, StoragePoolModel>();
+            // this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
+            **/
         }
 
+        /* Old code. dont know if this shod be used more.
         /// <summary>
         /// Gets or sets storage model. Information about all storage pool in dictonary.
         /// </summary>
@@ -47,14 +53,11 @@ namespace LiStorage.Services
         /// </summary>
         // public DateTime StorageLastChecked { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
-        private string zzDebug { get; set; }
-
-        internal Dictionary<string, RundataNodeServiceMastersModel> Masters { get; set; }
-
         // internal Dictionary<string, RundataNodeServiceCollectionModel> Collections { get; set; }
+         *
+         **/
+
+        public Dictionary<string, RundataNodeServiceMastersModel> Masters { get; set; }
 
         public NodeStartUpStatusModel StartUpStatus { get; set; }
 
@@ -65,9 +68,10 @@ namespace LiStorage.Services
         /// </summary>
         public RundataNodeServiceDrivesInformationModel DrivesInformation { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RundataNodeService"/> class.
-        /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
+        [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+        private string zzDebug { get; set; }
     }
 
     /// <summary>
@@ -147,6 +151,7 @@ namespace LiStorage.Services
     public class RundataNodeServiceMastersModel
     {
         public NodeConfigFileModel_MasterServers Filedata { get; set; }
+
         public RundataNodeServiceMastersModel()
         {
             this.Filedata = new NodeConfigFileModel_MasterServers();
@@ -155,8 +160,8 @@ namespace LiStorage.Services
 
     public class RundataNodeServiceCollectionModel
     {
-        internal NodeConfigFileModel_CollectionsAreas Filedata { get; set; }
-        
+        public NodeConfigFileModel_CollectionsAreas Filedata { get; set; }
+
         public RundataNodeServiceCollectionModel()
         {
             this.Filedata = new NodeConfigFileModel_CollectionsAreas();
