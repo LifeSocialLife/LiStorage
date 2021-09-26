@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31320.298
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiStorageNode", "LiStorageNode\LiStorageNode.csproj", "{9B2E07D5-AA69-416A-9F93-BE31F325455C}"
 EndProject
@@ -48,7 +48,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9B2E07D5-AA69-416A-9F93-BE31F325455C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B2E07D5-AA69-416A-9F93-BE31F325455C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B2E07D5-AA69-416A-9F93-BE31F325455C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B2E07D5-AA69-416A-9F93-BE31F325455C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F3393A8-75C5-48D1-B43D-D3CD8487A3B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
