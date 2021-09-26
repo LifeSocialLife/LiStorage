@@ -49,7 +49,7 @@ namespace LiStorage.Services.Node
         /// <param name="rundataService">RundataService.</param>
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
-        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode)
+        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation)
         {
             this.zzDebug = "StoragePoolService";
 
@@ -68,7 +68,6 @@ namespace LiStorage.Services.Node
         /// </summary>
         /// <param name="name">storage id (Key).</param>
         /// <returns>bool - true or false.</returns>
-        [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:BracesMustNotBeOmitted", Justification = "Reviewed.")]
         public bool ContainsKey(string name)
         {
             bool tmpReturn = false;
@@ -76,7 +75,9 @@ namespace LiStorage.Services.Node
             lock (this._lockKey)
             {
                 if (this.Storage.ContainsKey(name))
+                {
                     tmpReturn = true;
+                }
             }
 
             return tmpReturn;
@@ -91,6 +92,19 @@ namespace LiStorage.Services.Node
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Run check on storagepools.
+        /// </summary>
+        public void Check()
+        {
+            this.CheckStoragePools();
+
+            
+            this.zzDebug = "Check";
+
+            
         }
 
         /// <summary>
@@ -150,7 +164,7 @@ namespace LiStorage.Services.Node
         /// <summary>
         /// Check all storage pool that the are working as it shod.
         /// </summary>
-        internal void CheckStoragePools()
+        private void CheckStoragePools()
         {
             this.zzDebug = "sdfdf";
             if (!Helpers.TimeHelper.TimeShodTrigger(this.StorageLastChecked, Helpers.TimeValuesEnum.Minutes, 2))
@@ -186,7 +200,6 @@ namespace LiStorage.Services.Node
                         this.zzDebug = "dsfdsf";
                     }
                 }
-
             }
 
             this.zzDebug = "sdfd";
@@ -303,6 +316,11 @@ namespace LiStorage.Services.Node
             if (!this.Storage.ContainsKey(stgId))
             {
                 // StoragePool dont exist
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+
                 return false;
             }
 
@@ -315,15 +333,24 @@ namespace LiStorage.Services.Node
                 return false;
             }
 
+            this.zzDebug = "sfdsf";
+
             // Check that directory exist.
             // if (!this._fileOperation.DirectoryExist(stg.Filedata.FolderPath))
-            if (LiTools.Helpers.IO.Directory.Exist(stg.Filedata.FolderPath))
+            if (!LiTools.Helpers.IO.Directory.Exist(stg.Filedata.FolderPath))
             {
                 // Directory dont exist.
                 stg.Status = StoragePoolStatusEnum.Error;
                 stg.InitDone = true;
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+
                 return false;
             }
+
+            this.zzDebug = "sfdf";
 
             // Do file storage pool config file exist in directory
             // if (!this._fileOperation.FileExists($"{stg.Filedata.FolderPath}\\{stg.Filedata.Id}.stg"))
