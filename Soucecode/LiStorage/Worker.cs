@@ -9,6 +9,7 @@ namespace LiStorage
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
@@ -16,6 +17,7 @@ namespace LiStorage
     using LiStorage.Models.StoragePool;
     using LiStorage.Services;
     using LiStorage.Services.Node;
+    using LiTools.Helpers.Organize;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
@@ -37,6 +39,7 @@ namespace LiStorage
         private readonly BlockStorageService _objectStorage;
         private readonly NodeHttpService _httpserver;
         private readonly ConfigFileService _configFile;
+        private readonly TaskService _task;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Worker"/> class.
@@ -53,11 +56,13 @@ namespace LiStorage
         /// <param name="nodeHttpService">NodeHttpService.</param>
         /// <param name="collectionService">CollectionService.</param>
         /// <param name="configFileService">ConfigFileService.</param>
-        public Worker(ILogger<Worker> logger, IConfiguration configuration, RundataService rundataService, IHostApplicationLifetime hostappLifetime, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, BlockStorageService objectStorageService, NodeHttpService nodeHttpService, CollectionService collectionService, ConfigFileService configFileService)
+        /// <param name="taskService">TaskService.</param>
+        public Worker(ILogger<Worker> logger, IConfiguration configuration, RundataService rundataService, IHostApplicationLifetime hostappLifetime, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, BlockStorageService objectStorageService, NodeHttpService nodeHttpService, CollectionService collectionService, ConfigFileService configFileService, TaskService taskService)
         {
             this.zzDebug = "Worker";
 
             this._logger = logger;
+            this._task = taskService;
             this._configuration = configuration;
             this._rundata = rundataService;
             this._hostApplicationLifetime = hostappLifetime;
@@ -82,11 +87,15 @@ namespace LiStorage
 
             this.zzDebug = "sdfdf";
 
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
+
             await Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             #region Sett paths and other data
@@ -117,6 +126,9 @@ namespace LiStorage
 
             this.zzDebug = "sdfdsf";
 
+            // Set background status to shod be running.
+            this._storagepool.BackgroundTaskShodbeRunning = true;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 #region Locatea and read configfile
@@ -143,19 +155,23 @@ namespace LiStorage
                     }
                 }
 
-               #endregion
+                #endregion
 
-                // If configfile is reading. continue this while loop.
+                #region If configfile is reading. Stop and restart while.
+
                 if (this._node.StartUpStatus.ConfigFile == Models.Rundata.NodeStartUpStatusEnum.Running)
                 {
                     await Task.Delay(3000, stoppingToken);
                     continue;
                 }
 
+                #endregion
+
                 this.zzDebug = "sdfdsf";
 
-                this._configFile.Check();
-                this._storagepool.Check();
+                this._task.BackgroundTaskChecker();
+                this._configFile.BackgroundTaskChecker();
+                this._storagepool.BackgroundTaskChecker();
 
                 this._logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 try
@@ -164,29 +180,45 @@ namespace LiStorage
                 }
                 catch (OperationCanceledException)
                 {
-                    return;
+                    break;
                 }
             }
+
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
+            
+            LiTools.Helpers.Organize.ParallelTask.Token.Cancel();
+
         }
 
         private void OnStarted()
         {
+            // Perform post-startup activities here
             this._logger.LogInformation("OnStarted has been called.");
 
             this.zzDebug = "sdfdf";
 
-            // Perform post-startup activities here
+            //if (Debugger.IsAttached)
+            //{
+            //    Debugger.Break();
+            //}
         }
 
         private void OnStopping()
         {
+            // Perform on-stopping activities here
             this._logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work.");
             this._logger.LogInformation("NodeWorker | OnStopping | Stop all backgrounds work. | Done");
 
             // _logger.LogInformation("OnStopping has been called.");
             this.zzDebug = "sdfdf";
 
-            // Perform on-stopping activities here
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
         }
 
         private void OnStopped()
@@ -195,6 +227,10 @@ namespace LiStorage
             this._logger.LogInformation("OnStopped has been called.");
 
             this.zzDebug = "sdfdf";
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
         }
     }
 }

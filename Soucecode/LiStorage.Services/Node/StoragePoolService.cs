@@ -12,6 +12,7 @@ namespace LiStorage.Services.Node
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Data;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
@@ -21,6 +22,7 @@ namespace LiStorage.Services.Node
     using LiStorage.Models.StoragePool;
     using LiStorage.Services.Classes;
     using LiTools.Helpers.Convert;
+    using LiTools.Helpers.Organize;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -28,19 +30,12 @@ namespace LiStorage.Services.Node
     /// </summary>
     public class StoragePoolService
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
-        private string zzDebug { get; set; }
-
-#pragma warning disable SA1309 // Field names should not begin with underscore
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
         private readonly ILogger<StoragePoolService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
+        private readonly TaskService _task;
         private readonly object _lockKey;
-#pragma warning restore SA1309 // Field names should not begin with underscore
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoragePoolService"/> class.
@@ -49,7 +44,8 @@ namespace LiStorage.Services.Node
         /// <param name="rundataService">RundataService.</param>
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
-        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation)
+        /// <param name="taskService">TaskService.</param>
+        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation, TaskService taskService)
         {
             this.zzDebug = "StoragePoolService";
 
@@ -58,10 +54,54 @@ namespace LiStorage.Services.Node
             this._rundata = rundataService;
             this._node = rundataNode;
             this._fileOperation = fileOperation;
+            this._task = taskService;
             this.Storage = new Dictionary<string, StoragePoolModel>();
             this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
             this._lockKey = new object();
+            this.InitDone = false;
+            this.BackgroundTaskRunning = false;
+            this.BackgroundTaskShodbeRunning = false;
+            this.BackgroundTaskLastRun = Convert.ToDateTime("2000-01-01 00:00:00");
         }
+
+        #region Background task Variables
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is init done on this service?.
+        /// </summary>
+        public bool InitDone { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is background task runinng?.
+        /// </summary>
+        public bool BackgroundTaskRunning { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether shod background task be running?.
+        /// </summary>
+        public bool BackgroundTaskShodbeRunning { get; set; }
+
+        /// <summary>
+        /// Gets or sets when was the background task last run?.
+        /// </summary>
+        public DateTime BackgroundTaskLastRun { get; set; }
+
+        #endregion
+
+        [SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
+        [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+        private string zzDebug { get; set; }
+
+        /// <summary>
+        /// Gets or sets storage model. Information about all storage pool in dictonary.
+        /// </summary>
+        private Dictionary<string, StoragePoolModel> Storage { get; set; }
+
+        /// <summary>
+        /// Gets or sets when was storage last checked?.
+        /// </summary>
+        private DateTime StorageLastChecked { get; set; }
 
         /// <summary>
         /// Dp storage pool exist?.
@@ -83,28 +123,86 @@ namespace LiStorage.Services.Node
             return tmpReturn;
         }
 
+        /// <summary>
+        /// Add data to storage pool.
+        /// </summary>
+        /// <param name="key">Storagepool Id.</param>
+        /// <param name="data">Storagepool data.</param>
+        /// <returns>True if it was added. else false.</returns>
         public bool Add(string key, StoragePoolModel data)
         {
+            bool tmpReturn = false;
 
             lock (this._lockKey)
             {
-                this.Storage.Add(key,data);
+                if (!this.Storage.ContainsKey(key))
+                {
+                    this.Storage.Add(key, data);
+                    tmpReturn = true;
+                }
             }
 
-            return true;
+            return tmpReturn;
         }
 
         /// <summary>
         /// Run check on storagepools.
         /// </summary>
-        public void Check()
+        public void BackgroundTaskChecker()
         {
-            this.CheckStoragePools();
+            // Init it not done. return
+            if (!this.InitDone)
+            {
+                return;
+            }
 
-            
+            bool startBackgroundTask = false;
+
+            if ((!this.BackgroundTaskRunning) && this.BackgroundTaskShodbeRunning)
+            {
+                // Background work is not running.. Start backgroundwork.
+                startBackgroundTask = true;
+            }
+            else if ((DateTime.UtcNow - this.BackgroundTaskLastRun).TotalMinutes > 5)
+            {
+                // Background shod be running but have not reported anything for more then 5 min.
+                // TODO Fix this.
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+            }
+
+            if (startBackgroundTask)
+            {
+                // Check if task already exist?
+                if (this._task.TaskExists("storagepoolservice"))
+                {
+                    this._task.Check("storagepoolservice");
+                    System.Threading.Thread.Sleep(500);
+                }
+
+                // if (LiTools.Helpers.Organize.ParallelTask.Exist("storagepoolservice"))
+                if (this._task.TaskExists("storagepoolservice"))
+                {
+                    // Task already exist. what to do??
+                    // TODO Fix this.
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+                }
+                else
+                {
+                    // Start task.
+                    this.zzDebug = "dsf";
+                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "storagepoolservice");
+
+                    // LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "storagepoolservice");
+                }
+            }
+
             this.zzDebug = "Check";
-
-            
         }
 
         /// <summary>
@@ -112,7 +210,7 @@ namespace LiStorage.Services.Node
         /// </summary>
         /// <param name="key">storage pool id.</param>
         /// <returns>StoragePoolModel.</returns>
-        internal StoragePoolModel Get(string key)
+        public StoragePoolModel Get(string key)
         {
             StoragePoolModel? data;
 
@@ -131,7 +229,7 @@ namespace LiStorage.Services.Node
         /// <param name="path">string[] path.</param>
         /// <param name="data">BlockStorageDictModel.</param>
         /// <returns>model: BlockStorageDictModel.</returns>
-        internal Models.ObjectStorage.BlockStorageDictModel GetMetaFile(StoragePoolModel stg, string[] path, Models.ObjectStorage.BlockStorageDictModel data)
+        public Models.ObjectStorage.BlockStorageDictModel GetMetaFile(StoragePoolModel stg, string[] path, Models.ObjectStorage.BlockStorageDictModel data)
         {
             data.FileMetaPath = Path.Combine("meta", Path.Combine(path)).Trim().ToLower() + ".meta";
             data.FileMetaPathWhitStoragePath = Path.Combine(stg.Filedata.FolderPath, data.FileMetaPath).Trim().ToLower();
@@ -146,20 +244,53 @@ namespace LiStorage.Services.Node
                 return data;
             }
 
-
             this.zzDebug = "sdfds";
             return data;
         }
 
-        /// <summary>
-        /// Gets or sets storage model. Information about all storage pool in dictonary.
-        /// </summary>
-        private Dictionary<string, StoragePoolModel> Storage { get; set; }
+        private void BackgroundTask()
+        {
+            // int i = 0;
 
-        /// <summary>
-        /// Gets or sets when was storage last checked?.
-        /// </summary>
-        private DateTime StorageLastChecked { get; set; }
+            // while (!LiTools.Helpers.Organize.ParallelTask.Token.IsCancellationRequested)
+            while (!this._task.IsCancellationRequested("storagepoolservice"))
+            {
+                // Debug code
+                /*
+                i++;
+                if (i == 10)
+                {
+                    i = 99;
+                    this._task.CancelTask("storagepoolservice");
+                }
+                */
+
+                this.BackgroundTaskRunning = true;
+                this.BackgroundTaskLastRun = DateTime.UtcNow;
+                this.CheckStoragePools();
+
+                if (!this.BackgroundTaskShodbeRunning)
+                {
+                    break;
+                }
+
+                this._logger.LogInformation("StoragePoolService running at: {time}", DateTimeOffset.Now);
+                try
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    // Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
+                    // await Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+            }
+
+            this.zzDebug = "sdfdsf";
+
+            this.BackgroundTaskRunning = false;
+        }
 
         /// <summary>
         /// Check all storage pool that the are working as it shod.
@@ -279,8 +410,7 @@ namespace LiStorage.Services.Node
                 {
                     // This drive has new information
                     // .
-                    //var dd = this._node.Storage;
-
+                    // var dd = this._node.Storage;
                     List<StoragePoolModel> tmpMatchStorage = new List<StoragePoolModel>();
 
                     // var tmpMatchStorage = this._node.Storage.Values.Where(x => x.Filedata.FolderPath.ToLower().StartsWith(drive.Value.Data.Name.ToLower())).ToList();
@@ -306,11 +436,9 @@ namespace LiStorage.Services.Node
             }
 
             this.zzDebug = "sdfsd";
-
         }
 
         [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:BracesMustNotBeOmitted", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]
         private bool DoInitOnStoragePool(string stgId)
         {
             if (!this.Storage.ContainsKey(stgId))
@@ -377,7 +505,10 @@ namespace LiStorage.Services.Node
 
                         this.zzDebug = "dfdsf";
                         if (System.Diagnostics.Debugger.IsAttached)
+                        {
                             System.Diagnostics.Debugger.Break();
+                        }
+
                         return false;
                     }
                 }
@@ -513,7 +644,6 @@ namespace LiStorage.Services.Node
             double tmpReturn = LiTools.Helpers.Convert.Bytes.To(FileSizeEnums.Megabytes, (long)dd1);
 
             // ulong vOut = Convert.ToUInt64(tmpReturn);
-
             return Convert.ToUInt64(tmpReturn);
         }
     }

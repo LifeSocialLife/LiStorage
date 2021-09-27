@@ -258,6 +258,8 @@ namespace LiStorage.Services.Node
                         });
                     }
                 }
+
+                this._storagepool.InitDone = true;
                 #endregion
 
                 this.zzDebug = "sdfdf";
@@ -287,7 +289,7 @@ namespace LiStorage.Services.Node
         /// <summary>
         /// Run check on configfile service.
         /// </summary>
-        public void Check()
+        public void BackgroundTaskChecker()
         {
             this.zzDebug = "Check";
         }

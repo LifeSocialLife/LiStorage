@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.Organize\LiTools.Helpers.Organize.csproj" />
     <ProjectReference Include="..\LiStorage.Services\LiStorage.Services.csproj" />
   </ItemGroup>
   

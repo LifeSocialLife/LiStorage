@@ -48,6 +48,9 @@ namespace LiStorage.Gui
         /// <param name="services">IServiceCollection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Helper taskservice
+            services.AddSingleton<LiTools.Helpers.Organize.TaskService>();
+
             // LiStorage backend services
             services.AddSingleton<RundataService>();
             services.AddSingleton<RundataNodeService>();
