@@ -196,7 +196,7 @@ namespace LiStorage.Services.Node
                 {
                     // Start task.
                     this.zzDebug = "dsf";
-                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "storagepoolservice");
+                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "storagepoolservice", true);
 
                     // LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "storagepoolservice");
                 }

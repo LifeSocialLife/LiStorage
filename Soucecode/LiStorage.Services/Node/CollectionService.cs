@@ -15,6 +15,7 @@ namespace LiStorage.Services.Node
     using System.Threading;
     using System.Threading.Tasks;
     using LiStorage.Models.StoragePool;
+    using LiTools.Helpers.Organize;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
@@ -27,6 +28,7 @@ namespace LiStorage.Services.Node
         private readonly ILogger<CollectionService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
+        private readonly TaskService _task;
 
         /*
         //private readonly IHostApplicationLifetime _hostApplicationLifetime;
@@ -51,12 +53,14 @@ namespace LiStorage.Services.Node
         /// <param name="fileStorageService">FileStorageService.</param>
         /// <param name="objectStorageService">ObjectStorageService.</param>
         /// <param name="nodeHttpService">NodeHttpService.</param>
+        /// <param name="taskService">TaskService.</param>
         [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-        public CollectionService(ILogger<CollectionService> logger,  RundataService rundataService, RundataNodeService rundataNode) // , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
+        public CollectionService(ILogger<CollectionService> logger,  RundataService rundataService, RundataNodeService rundataNode, TaskService taskService) // , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
         {
             // FileOperationService fileOperation, IHostApplicationLifetime hostappLifetime,
             this.zzDebug = "NodeWorker";
 
+            this._task = taskService;
             this._logger = logger;
             this._rundata = rundataService;
             this._node = rundataNode;
@@ -173,7 +177,7 @@ namespace LiStorage.Services.Node
         /// <summary>
         /// Run check on storagepools.
         /// </summary>
-        public void Check()
+        public void BackgroundTaskChecker()
         {
             // Init it not done. return
             if (!this.InitDone)
@@ -201,7 +205,14 @@ namespace LiStorage.Services.Node
             if (startBackgroundTask)
             {
                 // Check if task already exist?
-                if (LiTools.Helpers.Organize.ParallelTask.Exist("collectionservice"))
+                if (this._task.TaskExists("collectionservice"))
+                {
+                    this._task.Check("collectionservice");
+                    System.Threading.Thread.Sleep(500);
+                }
+
+                // if (LiTools.Helpers.Organize.ParallelTask.Exist("storagepoolservice"))
+                if (this._task.TaskExists("collectionservice"))
                 {
                     // Task already exist. what to do??
                     // TODO Fix this.
@@ -214,8 +225,9 @@ namespace LiStorage.Services.Node
                 {
                     // Start task.
                     this.zzDebug = "dsf";
+                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "collectionservice", true);
 
-                    LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "collectionservice");
+                    // LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "storagepoolservice");
                 }
             }
 
