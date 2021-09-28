@@ -1,7 +1,7 @@
 ﻿// <summary>
 // Storage pool work.
 // </summary>
-// <copyright file="CollectionService.cs" company="LiSoLi">
+// <copyright file="CollectionPoolService.cs" company="LiSoLi">
 // Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
 // <author>Lennie Wennerlund (lempa)</author>
@@ -14,6 +14,7 @@ namespace LiStorage.Services.Node
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using LiStorage.Models.CollectionPool;
     using LiStorage.Models.StoragePool;
     using LiTools.Helpers.Organize;
     using Microsoft.Extensions.Hosting;
@@ -22,10 +23,10 @@ namespace LiStorage.Services.Node
     /// <summary>
     /// Collection handler.
     /// </summary>
-    public class CollectionService
+    public class CollectionPoolService
     {
         private readonly object _lockKey;
-        private readonly ILogger<CollectionService> _logger;
+        private readonly ILogger<CollectionPoolService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly TaskService _task;
@@ -39,10 +40,10 @@ namespace LiStorage.Services.Node
         //private readonly NodeHttpService _httpserver;
         */
 
-        private Dictionary<string, RundataNodeServiceCollectionModel> Collections { get; set; }
+        private Dictionary<string, CollectionPoolModel> Collections { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionService"/> class.
+        /// Initializes a new instance of the <see cref="CollectionPoolService"/> class.
         /// </summary>
         /// <param name="logger">ILogger.</param>
         /// <param name="hostappLifetime">IHostApplicationLifetime.</param>
@@ -55,7 +56,7 @@ namespace LiStorage.Services.Node
         /// <param name="nodeHttpService">NodeHttpService.</param>
         /// <param name="taskService">TaskService.</param>
         [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-        public CollectionService(ILogger<CollectionService> logger,  RundataService rundataService, RundataNodeService rundataNode, TaskService taskService) // , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
+        public CollectionPoolService(ILogger<CollectionPoolService> logger,  RundataService rundataService, RundataNodeService rundataNode, TaskService taskService) // , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
         {
             // FileOperationService fileOperation, IHostApplicationLifetime hostappLifetime,
             this.zzDebug = "NodeWorker";
@@ -74,7 +75,7 @@ namespace LiStorage.Services.Node
             */
 
             this._lockKey = new object();
-            this.Collections = new Dictionary<string, RundataNodeServiceCollectionModel>();
+            this.Collections = new Dictionary<string, CollectionPoolModel>();
         }
 
         #region Background task Variables
@@ -131,7 +132,7 @@ namespace LiStorage.Services.Node
         /// <param name="key">collection id.</param>
         /// <param name="data">collection data.</param>
         /// <returns>true.</returns>
-        public bool Add(string key, RundataNodeServiceCollectionModel data)
+        public bool Add(string key, CollectionPoolModel data)
         {
             lock (this._lockKey)
             {
@@ -146,9 +147,9 @@ namespace LiStorage.Services.Node
         /// </summary>
         /// <param name="collId">Key of collection.</param>
         /// <returns>RundataNodeServiceCollectionModel.</returns>
-        public RundataNodeServiceCollectionModel Get(string collId)
+        public CollectionPoolModel Get(string collId)
         {
-            RundataNodeServiceCollectionModel data;
+            CollectionPoolModel data;
 
             lock (this._lockKey)
             {
@@ -162,13 +163,13 @@ namespace LiStorage.Services.Node
         /// Get all collections and return as new dictonary.
         /// </summary>
         /// <returns>Dictionary whit all collections.</returns>
-        public Dictionary<string, RundataNodeServiceCollectionModel> GetAll()
+        public Dictionary<string, CollectionPoolModel> GetAll()
         {
-            Dictionary<string, RundataNodeServiceCollectionModel> data = new Dictionary<string, RundataNodeServiceCollectionModel>();
+            Dictionary<string, CollectionPoolModel> data = new Dictionary<string, CollectionPoolModel>();
 
             lock (this._lockKey)
             {
-                data = (Dictionary<string, RundataNodeServiceCollectionModel>)this.Collections;
+                data = (Dictionary<string, CollectionPoolModel>)this.Collections;
             }
 
             return data;
@@ -185,6 +186,7 @@ namespace LiStorage.Services.Node
                 return;
             }
 
+            var dd = this.Collections;
             bool startBackgroundTask = false;
 
             if ((!this.BackgroundTaskRunning) && this.BackgroundTaskShodbeRunning)
@@ -234,7 +236,7 @@ namespace LiStorage.Services.Node
             this.zzDebug = "Check";
         }
 
-        private async void BackgroundTask()
+        private void BackgroundTask()
         {
             while (!LiTools.Helpers.Organize.ParallelTask.Token.IsCancellationRequested)
             {
@@ -249,7 +251,9 @@ namespace LiStorage.Services.Node
                 this._logger.LogInformation("Collection Service running at: {time}", DateTimeOffset.Now);
                 try
                 {
-                    await Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
+                    System.Threading.Thread.Sleep(1000);
+
+                    // await Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
                 }
                 catch (OperationCanceledException)
                 {

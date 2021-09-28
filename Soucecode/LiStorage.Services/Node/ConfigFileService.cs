@@ -12,6 +12,7 @@ namespace LiStorage.Services.Node
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
+    using LiStorage.Models.CollectionPool;
     using LiStorage.Models.StoragePool;
     using Microsoft.Extensions.Logging;
 
@@ -23,7 +24,7 @@ namespace LiStorage.Services.Node
         private readonly ILogger<ConfigFileService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
-        private readonly CollectionService _collections;
+        private readonly CollectionPoolService _collections;
         private readonly StoragePoolService _storagepool;
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace LiStorage.Services.Node
         /// <param name="rundataNode">RundataNodeService.</param>
         /// <param name="collectionService">CollectionService.</param>
         /// <param name="storagePoolService">StoragePoolService.</param>
-        public ConfigFileService(RundataService rundataService, ILogger<ConfigFileService> logger, RundataNodeService rundataNode, CollectionService collectionService, StoragePoolService storagePoolService)
+        public ConfigFileService(RundataService rundataService, ILogger<ConfigFileService> logger, RundataNodeService rundataNode, CollectionPoolService collectionService, StoragePoolService storagePoolService)
         {
             this._logger = logger;
 
@@ -211,7 +212,7 @@ namespace LiStorage.Services.Node
                             continue;       // This collection already exist
                         }
 
-                        this._collections.Add(collection.Id + "-default", new RundataNodeServiceCollectionModel()
+                        this._collections.Add(collection.Id + "-default", new CollectionPoolModel()
                         {
                             Filedata = collection,
                         });
@@ -225,7 +226,7 @@ namespace LiStorage.Services.Node
                                     continue;       // This collection already exist
                                 }
 
-                                this._collections.Add(collection.Id + "-" + area.Id, new RundataNodeServiceCollectionModel()
+                                this._collections.Add(collection.Id + "-" + area.Id, new CollectionPoolModel()
                                 {
                                     Filedata = area,
                                 });
@@ -233,6 +234,8 @@ namespace LiStorage.Services.Node
                         }
                     }
                 }
+
+                this._collections.InitDone = true;
 
                 #endregion
 

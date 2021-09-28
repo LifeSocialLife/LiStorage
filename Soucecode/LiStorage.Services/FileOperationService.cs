@@ -31,7 +31,7 @@ namespace LiStorage.Services
         private readonly ILogger<FileOperationService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
-        private readonly CollectionService _collections;
+        private readonly CollectionPoolService _collections;
 
         // private readonly StoragePoolService _storagepool;
 
@@ -43,7 +43,7 @@ namespace LiStorage.Services
         /// <param name="rundataNode">RundataNodeService.</param>
         /// <param name="collectionService">CollectionService.</param>
         /// <param name="storagePoolService">StoragePoolService.</param>
-        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger, RundataNodeService rundataNode, CollectionService collectionService)
+        public FileOperationService(RundataService rundataService, ILogger<FileOperationService> logger, RundataNodeService rundataNode, CollectionPoolService collectionService)
         {
             this._logger = logger;
 

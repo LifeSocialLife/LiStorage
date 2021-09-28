@@ -150,6 +150,8 @@ namespace LiStorage.Services.Node
         /// </summary>
         public void BackgroundTaskChecker()
         {
+            this.zzDebug = "sfdsf";
+
             // Init it not done. return
             if (!this.InitDone)
             {

@@ -51,7 +51,7 @@ namespace LiStorage.Models.StoragePool
         public StoragePoolConfigFileModel ConfigData { get; set; }
 
         /// <summary>
-        /// Gets or sets when where status (check) last run on this storage pool
+        /// Gets or sets when where status (check) last run on this storage pool.
         /// </summary>
         public DateTime DtLastCheck { get; set; }
 

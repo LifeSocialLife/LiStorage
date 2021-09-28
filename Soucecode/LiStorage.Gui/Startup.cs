@@ -54,7 +54,7 @@ namespace LiStorage.Gui
             // LiStorage backend services
             services.AddSingleton<RundataService>();
             services.AddSingleton<RundataNodeService>();
-            services.AddSingleton<CollectionService>();
+            services.AddSingleton<CollectionPoolService>();
             services.AddSingleton<StoragePoolService>();
             services.AddSingleton<BlockStorageService>();
             services.AddSingleton<NodeHttpService>();

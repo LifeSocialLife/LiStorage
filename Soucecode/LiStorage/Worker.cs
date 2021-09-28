@@ -34,7 +34,7 @@ namespace LiStorage
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
-        private readonly CollectionService _collections;
+        private readonly CollectionPoolService _collections;
         private readonly StoragePoolService _storagepool;
         private readonly BlockStorageService _objectStorage;
         private readonly NodeHttpService _httpserver;
@@ -57,7 +57,7 @@ namespace LiStorage
         /// <param name="collectionService">CollectionService.</param>
         /// <param name="configFileService">ConfigFileService.</param>
         /// <param name="taskService">TaskService.</param>
-        public Worker(ILogger<Worker> logger, IConfiguration configuration, RundataService rundataService, IHostApplicationLifetime hostappLifetime, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, BlockStorageService objectStorageService, NodeHttpService nodeHttpService, CollectionService collectionService, ConfigFileService configFileService, TaskService taskService)
+        public Worker(ILogger<Worker> logger, IConfiguration configuration, RundataService rundataService, IHostApplicationLifetime hostappLifetime, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, BlockStorageService objectStorageService, NodeHttpService nodeHttpService, CollectionPoolService collectionService, ConfigFileService configFileService, TaskService taskService)
         {
             this.zzDebug = "Worker";
 
@@ -172,6 +172,7 @@ namespace LiStorage
                 this._task.BackgroundTaskChecker();
                 this._configFile.BackgroundTaskChecker();
                 this._storagepool.BackgroundTaskChecker();
+                this._collections.BackgroundTaskChecker();
 
                 this._logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 try

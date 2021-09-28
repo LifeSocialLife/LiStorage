@@ -158,16 +158,6 @@ namespace LiStorage.Services
         }
     }
 
-    public class RundataNodeServiceCollectionModel
-    {
-        public NodeConfigFileModel_CollectionsAreas Filedata { get; set; }
-
-        public RundataNodeServiceCollectionModel()
-        {
-            this.Filedata = new NodeConfigFileModel_CollectionsAreas();
-        }
-    }
-
     public class RundataNodeServiceConfigFileDataModel
     {
         public string NodeName { get; set; }
