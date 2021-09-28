@@ -38,6 +38,5 @@ namespace LiStorage.Models.CollectionPool
         /// Gets or sets a value indicating whether is init done on this storage pool.
         /// </summary>
         public bool InitDone { get; set; }
-
     }
 }
