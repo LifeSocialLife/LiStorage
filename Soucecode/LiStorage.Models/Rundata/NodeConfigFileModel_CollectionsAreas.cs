@@ -9,21 +9,47 @@
 namespace LiStorage.Models.Rundata
 {
     using System;
+
+    /// <summary>
+    /// Model for all collections areas in node config file.
+    /// </summary>
     public class NodeConfigFileModel_CollectionsAreas
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string StoragePoolMetaDefault { get; set; }
-        public string StoragePoolDataDefault { get; set; }
-        public bool Enabled { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeConfigFileModel_CollectionsAreas"/> class.
+        /// </summary>
         public NodeConfigFileModel_CollectionsAreas()
         {
-            this.Id = "";
-            this.Name = "";
-            this.StoragePoolMetaDefault = "";
-            this.StoragePoolDataDefault = "";
+            this.Id = string.Empty;
+            this.Name = string.Empty;
+            this.StoragePoolMetaDefault = string.Empty;
+            this.StoragePoolDataDefault = string.Empty;
             this.Enabled = false;
         }
+
+        /// <summary>
+        /// Gets or sets id of this collections Area.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets name of this collection.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets default storage pool for Meta data.
+        /// </summary>
+        public string StoragePoolMetaDefault { get; set; }
+
+        /// <summary>
+        /// Gets or sets default storage pool for Data.
+        /// </summary>
+        public string StoragePoolDataDefault { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is this allow to be used.
+        /// </summary>
+        public bool Enabled { get; set; }
     }
 }

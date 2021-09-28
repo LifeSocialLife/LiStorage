@@ -189,9 +189,8 @@ namespace LiStorage
             {
                 Debugger.Break();
             }
-            
-            LiTools.Helpers.Organize.ParallelTask.Token.Cancel();
 
+            LiTools.Helpers.Organize.ParallelTask.Token.Cancel();
         }
 
         private void OnStarted()
@@ -201,10 +200,12 @@ namespace LiStorage
 
             this.zzDebug = "sdfdf";
 
+            /*
             //if (Debugger.IsAttached)
             //{
             //    Debugger.Break();
             //}
+            */
         }
 
         private void OnStopping()

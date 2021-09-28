@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <summary>
+// Model StoragePoolConfigFileModel.
+// </summary>
+// <copyright file="StoragePoolConfigFileModel.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Models.StoragePool
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+    /// <summary>
+    /// Storage Pool Configuration File Model.
+    /// </summary>
     public class StoragePoolConfigFileModel
     {
-        public string Id { get; set; }
-        public ushort Version { get; set; }
-        public StoragePoolTypesEnum StorageType { get; set; }
-        public bool AllowData { get; set; }
-        public bool AllowMeta { get; set; }
-        public StoragePoolConfigFileModelCompress Compress { get; set; }
-        public StoragePoolConfigFileModelEncryption Encryption { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StoragePoolConfigFileModel"/> class.
+        /// </summary>
         public StoragePoolConfigFileModel()
         {
-            this.Id = "";
+            this.Id = string.Empty;
             this.Version = 0;
             this.StorageType = StoragePoolTypesEnum.None;
             this.AllowData = false;
@@ -24,6 +30,20 @@ namespace LiStorage.Models.StoragePool
             this.Compress = new StoragePoolConfigFileModelCompress();
             this.Encryption = new StoragePoolConfigFileModelEncryption();
         }
+
+        public string Id { get; set; }
+        public ushort Version { get; set; }
+
+        /// <summary>
+        /// Gets or sets type of storage type this is. singel, raid0 to 10.
+        /// </summary>
+        public StoragePoolTypesEnum StorageType { get; set; }
+        public bool AllowData { get; set; }
+        public bool AllowMeta { get; set; }
+        public StoragePoolConfigFileModelCompress Compress { get; set; }
+        public StoragePoolConfigFileModelEncryption Encryption { get; set; }
+
+        
     }
     public class StoragePoolConfigFileModelCompress
     {
