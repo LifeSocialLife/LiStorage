@@ -1,8 +1,8 @@
 ﻿// <summary>
 // Enums for Storage pools
 // </summary>
-// <copyright file="StoragePoolEnums.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="StoragePoolEnums.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
 // <author>Lennie Wennerlund (lempa)</author>
 

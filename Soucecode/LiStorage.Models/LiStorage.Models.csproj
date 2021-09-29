@@ -20,4 +20,8 @@
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.IO\LiTools.Helpers.IO.csproj" />
+  </ItemGroup>
+
 </Project>

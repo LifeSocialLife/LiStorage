@@ -31,45 +31,39 @@ namespace LiStorage.Models.StoragePool
             this.Encryption = new StoragePoolConfigFileModelEncryption();
         }
 
+        /// <summary>
+        /// Gets or sets id of this storage pool.
+        /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets version this configuration file is saved in.
+        /// </summary>
         public ushort Version { get; set; }
 
         /// <summary>
         /// Gets or sets type of storage type this is. singel, raid0 to 10.
         /// </summary>
         public StoragePoolTypesEnum StorageType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether do we allow data to be saved in this storage pool.
+        /// </summary>
         public bool AllowData { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether do we allow meta to be saved in this storage pool.
+        /// </summary>
         public bool AllowMeta { get; set; }
+
+        /// <summary>
+        /// Gets or sets compress model for this storage pool.
+        /// </summary>
         public StoragePoolConfigFileModelCompress Compress { get; set; }
+
+        /// <summary>
+        /// Gets or sets encryption for this storage pool.
+        /// </summary>
         public StoragePoolConfigFileModelEncryption Encryption { get; set; }
-
-        
-    }
-    public class StoragePoolConfigFileModelCompress
-    {
-        public bool CompressAllowd { get; set; }
-        public bool CompressAllData { get; set; }
-        public bool CompressAllMeta { get; set; }
-        public StoragePoolConfigFileModelCompress()
-        {
-            this.CompressAllData = false;
-            this.CompressAllData = false;
-            this.CompressAllMeta = false;
-        }
-    }
-    public class StoragePoolConfigFileModelEncryption
-    {
-        public bool EncryptionAllowd { get; set; }
-        public bool EncryptAllData { get; set; }
-        public bool EncryptAllMeta { get; set; }
-        public Dictionary<string, string> Keys { get; set; }
-
-        public StoragePoolConfigFileModelEncryption()
-        {
-            this.EncryptionAllowd = false;
-            this.EncryptAllData = false;
-            this.EncryptAllMeta = false;
-            this.Keys = new Dictionary<string, string>();
-        }
     }
 }

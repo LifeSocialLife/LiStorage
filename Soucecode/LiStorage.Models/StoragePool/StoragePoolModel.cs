@@ -94,6 +94,5 @@ namespace LiStorage.Models.StoragePool
         /// Gets or sets a value indicating whether is spave free collected on this storagepool.
         /// </summary>
         public bool SpaceFreeCollected { get; set; }
-
     }
 }

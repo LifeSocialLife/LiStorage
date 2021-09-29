@@ -19,6 +19,7 @@ namespace LiStorage.Services.Node
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
+    using LiStorage.Models.Rundata;
     using LiStorage.Models.StoragePool;
     using LiStorage.Services.Classes;
     using LiTools.Helpers.Convert;
@@ -280,6 +281,7 @@ namespace LiStorage.Services.Node
                 try
                 {
                     System.Threading.Thread.Sleep(1000);
+
                     // Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
                     // await Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
                 }
@@ -585,7 +587,7 @@ namespace LiStorage.Services.Node
             {
                 // Meta dont exist. shod it exist.
                 // if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\meta"))
-                if (!LiTools.Helpers.IO.Directory.DirectoryCreate($"{stg.Filedata.FolderPath}\\meta"))
+                if (!LiTools.Helpers.IO.Directory.Create($"{stg.Filedata.FolderPath}\\meta"))
                 {
                     // Error creating meta folder
                     stg.Status = StoragePoolStatusEnum.Error;
@@ -598,7 +600,7 @@ namespace LiStorage.Services.Node
             {
                 // Meta dont exist. shod it exist.
                 // if (!this._fileOperation.DirectoryCreate($"{stg.Filedata.FolderPath}\\data"))
-                if (!LiTools.Helpers.IO.Directory.DirectoryCreate($"{stg.Filedata.FolderPath}\\data"))
+                if (!LiTools.Helpers.IO.Directory.Create($"{stg.Filedata.FolderPath}\\data"))
                 {
                     // Error creating meta folder
                     stg.Status = StoragePoolStatusEnum.Error;

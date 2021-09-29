@@ -57,10 +57,19 @@ namespace LiStorage.Services
          *
          **/
 
+        /// <summary>
+        /// Gets or sets dictionary all Master servers.
+        /// </summary>
         public Dictionary<string, RundataNodeServiceMastersModel> Masters { get; set; }
 
+        /// <summary>
+        /// Gets or sets node startup Status.
+        /// </summary>
         public NodeStartUpStatusModel StartUpStatus { get; set; }
 
+        /// <summary>
+        /// Gets or sets information about configfile.
+        /// </summary>
         public RundataNodeServiceConfigFileDataModel ConfigFileData { get; set; }
 
         /// <summary>
@@ -73,110 +82,4 @@ namespace LiStorage.Services
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
         private string zzDebug { get; set; }
     }
-
-    /// <summary>
-    /// Drives information Model.
-    /// </summary>
-    public class RundataNodeServiceDrivesInformationModel
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RundataNodeServiceDrivesInformationModel"/> class.
-        /// </summary>
-        public RundataNodeServiceDrivesInformationModel()
-        {
-            this.Drive = new Dictionary<string, RundataNodeServiceDrivesInformationDictModel>();
-            this.LastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
-            this.CheckedIsRunning = false;
-        }
-
-        /// <summary>
-        /// Gets or sets information about all drives that exist in this node.
-        /// </summary>
-        public Dictionary<string, RundataNodeServiceDrivesInformationDictModel> Drive { get; set; }
-
-        /// <summary>
-        /// Gets or sets date and time in utc when it was last run.
-        /// </summary>
-        public DateTime LastChecked { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is the drives collecter running now.
-        /// </summary>
-        public bool CheckedIsRunning { get; set; }
-    }
-
-    /// <summary>
-    /// RundataNodeServiceDrivesInformationDictModel.
-    /// </summary>
-    public class RundataNodeServiceDrivesInformationDictModel
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RundataNodeServiceDrivesInformationDictModel"/> class.
-        /// </summary>
-        public RundataNodeServiceDrivesInformationDictModel()
-        {
-            this.ContainNewData = false;
-            this.Data = new GetDrivesInformationReturnModel();
-            this.DtAdded = DateTime.UtcNow;
-            this.DtLastChecked = DateTime.UtcNow;
-            this.DtLastUpdated = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is this information new or old information?.
-        /// </summary>
-        public bool ContainNewData { get; set; }
-
-        /// <summary>
-        /// Gets or sets drivesInformation Return Model from Drives Helper.
-        /// </summary>
-        public GetDrivesInformationReturnModel Data { get; set; }
-
-        /// <summary>
-        /// Gets or sets when was it last updated.
-        /// </summary>
-        public DateTime DtLastUpdated { get; set; }
-
-        /// <summary>
-        /// Gets or sets when was it last checked.
-        /// </summary>
-        public DateTime DtLastChecked { get; set; }
-
-        /// <summary>
-        /// Gets or sets when was it added.
-        /// </summary>
-        public DateTime DtAdded { get; set; }
-    }
-
-    public class RundataNodeServiceMastersModel
-    {
-        public NodeConfigFileModel_MasterServers Filedata { get; set; }
-
-        public RundataNodeServiceMastersModel()
-        {
-            this.Filedata = new NodeConfigFileModel_MasterServers();
-        }
-    }
-
-    public class RundataNodeServiceConfigFileDataModel
-    {
-        public string NodeName { get; set; }
-        public string ClusterKey { get; set; }
-        public string HeaderApiKey { get; set; }
-        public UInt16 Version { get; set; }
-
-        public bool NeedToBeSaved { get; set; }
-        public RundataNodeServiceConfigFileDataModel()
-        {
-            
-            this.NodeName = "";
-            this.ClusterKey = "";
-            this.HeaderApiKey = "";
-            this.Version = 0;
-            this.NeedToBeSaved = false;
-        }
-    }
-
-
-
 }

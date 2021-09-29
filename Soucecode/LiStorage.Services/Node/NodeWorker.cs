@@ -21,17 +21,11 @@ namespace LiStorage.Services.Node
     /// </summary>
     public class NodeWorker : BackgroundService
     {
-
-
-
-
         /// <inheritdoc/>
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-
-
-
             /*
 
 
@@ -75,9 +69,5 @@ namespace LiStorage.Services.Node
 
             */
         }
-
-        
-
-       
     }
 }
