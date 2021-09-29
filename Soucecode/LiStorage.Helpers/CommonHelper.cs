@@ -1,4 +1,10 @@
-﻿
+﻿// <summary>
+// Rundata Service.
+// </summary>
+// <copyright file="CommonHelper.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Helpers
 {
@@ -18,6 +24,8 @@ namespace LiStorage.Helpers
 
         private static string? zzDebug { get; set; }
 
+        // TODO move this to helper
+
         /// <summary>
         /// Json string to model.
         /// </summary>
@@ -34,9 +42,9 @@ namespace LiStorage.Helpers
 #pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<T>(json);
 #pragma warning restore CS8603 // Possible null reference return.
-
         }
 
+        // TODO move this to helper
         public static T DeserializeJson<T>(byte[] data)
         {
             if (data == null || data.Length < 1)
@@ -47,6 +55,7 @@ namespace LiStorage.Helpers
             return DeserializeJson<T>(Encoding.UTF8.GetString(data));
         }
 
+        //TODO Already exist in helper.
         public static string? SerializeJson(object obj, bool pretty)
         {
             if (obj == null) return null;

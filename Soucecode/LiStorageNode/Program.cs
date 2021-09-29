@@ -1,3 +1,11 @@
+// <summary>
+// {one line to give the library's name and an idea of what it does.}
+// </summary>
+// <copyright file="Program.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

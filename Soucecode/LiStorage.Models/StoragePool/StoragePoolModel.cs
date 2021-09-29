@@ -1,8 +1,8 @@
 ﻿// <summary>
 // Node storage pool model
 // </summary>
-// <copyright file="StoragePoolModel.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="StoragePoolModel.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
 // <author>Lennie Wennerlund (lempa)</author>
 
@@ -27,6 +27,8 @@ namespace LiStorage.Models.StoragePool
 
             // this.IsWorking = false;
             this.Status = StoragePoolStatusEnum.Nodata;
+            this.StatusMessage = string.Empty;
+
             this.DtLastCheck = Convert.ToDateTime("2000-01-01 00:00:00");
 
             this.Filedata = new StoragePoolNodeConfigPartModel();
@@ -49,7 +51,7 @@ namespace LiStorage.Models.StoragePool
         public StoragePoolConfigFileModel ConfigData { get; set; }
 
         /// <summary>
-        /// Gets or sets when where status (check) last run on this storage pool
+        /// Gets or sets when where status (check) last run on this storage pool.
         /// </summary>
         public DateTime DtLastCheck { get; set; }
 
@@ -69,6 +71,11 @@ namespace LiStorage.Models.StoragePool
         public StoragePoolStatusEnum Status { get; set; }
 
         /// <summary>
+        /// Gets or sets. Message of the last status.
+        /// </summary>
+        public string StatusMessage { get; set; }
+
+        /// <summary>
         /// Gets or sets space this storage pool is using.
         /// </summary>
         public ulong SpaceUsedInMbytes { get; set; }
@@ -84,9 +91,8 @@ namespace LiStorage.Models.StoragePool
         public ulong SpaceFreeInMbytes { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is spave free collected on this storagepool
+        /// Gets or sets a value indicating whether is spave free collected on this storagepool.
         /// </summary>
         public bool SpaceFreeCollected { get; set; }
-
     }
 }

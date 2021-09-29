@@ -1,6 +1,10 @@
+// <summary>
+// {one line to give the library's name and an idea of what it does.}
+// </summary>
 // <copyright file="Startup.cs" company="LiSoLi">
 // Copyright (c) LiSoLi. All rights reserved.
 // </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorageNode
 {
@@ -50,7 +54,7 @@ namespace LiStorageNode
             #endregion
 
             services.AddSingleton<RundataNodeService>();
-            services.AddSingleton<CollectionService>();
+            services.AddSingleton<CollectionPoolService>();
             services.AddSingleton<StoragePoolService>();
             services.AddSingleton<BlockStorageService>();
             services.AddSingleton<NodeHttpService>();
@@ -58,10 +62,8 @@ namespace LiStorageNode
             services.AddRazorPages();
 
             services.AddHostedService<NodeWorker>();
-
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

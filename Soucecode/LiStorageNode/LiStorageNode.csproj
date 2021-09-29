@@ -5,23 +5,30 @@
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <UserSecretsId>015aa7f1-09e3-41b6-b7fb-59c1030be187</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.0-preview.5.21301.17" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0-preview.5.21301.17" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0-rc.1.21452.15" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.0-rc.1.21452.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="../stylecop.json" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\LiStorage.Helpers\LiStorage.Helpers.csproj" />
     <ProjectReference Include="..\LiStorage.Models\LiStorage.Models.csproj" />

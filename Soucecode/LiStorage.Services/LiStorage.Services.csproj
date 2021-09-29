@@ -6,28 +6,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JWT" Version="8.2.2" />
+    <PackageReference Include="JWT" Version="8.4.0" />
     <PackageReference Include="LiTools.Helpers.Convert" Version="0.0.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.11.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0-preview.5.21301.17" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0-rc.1.21452.15" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-rc.1.21451.13" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-rc.1.21451.13" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Watson" Version="4.2.0.1" />
+    <PackageReference Include="Watson" Version="4.2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.Convert\LiTools.Helpers.Convert.csproj" />
     <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.IO\LiTools.Helpers.IO.csproj" />
+    <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.Organize\LiTools.Helpers.Organize.csproj" />
     <ProjectReference Include="..\LiStorage.Helpers\LiStorage.Helpers.csproj" />
     <ProjectReference Include="..\LiStorage.Models\LiStorage.Models.csproj" />
-    <AdditionalFiles Include="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
 
   

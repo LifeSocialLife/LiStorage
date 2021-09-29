@@ -15,6 +15,7 @@ namespace LiStorage.Services.Node
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
+    using LiStorage.Models.CollectionPool;
     using LiStorage.Models.StoragePool;
     using LiTools.Helpers.Convert;
     using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ namespace LiStorage.Services.Node
         /// <param name="rundataNode"></param>
         /// <param name="storagePoolService"></param>
         /// <param name="collectionService">CollectionService.</param>
-        public BlockStorageService(ILogger<BlockStorageService> logger, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, CollectionService collectionService)
+        public BlockStorageService(ILogger<BlockStorageService> logger, RundataService rundataService, FileOperationService fileOperation, RundataNodeService rundataNode, StoragePoolService storagePoolService, CollectionPoolService collectionService)
         {
             this.zzDebug = "ObjectStorageService";
             this._logger = logger;
@@ -60,7 +61,7 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
-        private readonly CollectionService _collections;
+        private readonly CollectionPoolService _collections;
         private readonly StoragePoolService _storagePool;
         private readonly object _lockKey;
 #pragma warning restore SA1309 // Field names should not begin with underscore
@@ -111,7 +112,7 @@ namespace LiStorage.Services.Node
             else
             {
                 // Block id dont exist in memory. Locate bloock meta data from storage Pool.
-                RundataNodeServiceCollectionModel? collectionInformation = new RundataNodeServiceCollectionModel();
+                CollectionPoolModel? collectionInformation = new CollectionPoolModel();
 
                 // Do collection exist?
                 if (this._collections.ContainsKey(md.BlockData.CollectionName))

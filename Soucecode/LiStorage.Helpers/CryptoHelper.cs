@@ -1,4 +1,12 @@
-﻿using System;
+﻿// <summary>
+// {one line to give the library's name and an idea of what it does.}
+// </summary>
+// <copyright file="CryptoHelper.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>v
+
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.IO;

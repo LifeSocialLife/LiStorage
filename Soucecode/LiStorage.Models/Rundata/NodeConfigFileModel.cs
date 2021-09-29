@@ -1,91 +1,72 @@
-﻿using LiStorage.Models.StoragePool;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿// <summary>
+// Main configuration file for node model.
+// </summary>
+// <copyright file="NodeConfigFileModel.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
+// <author>Lennie Wennerlund (lempa)</author>
 
 namespace LiStorage.Models.Rundata
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Text;
+    using LiStorage.Models.StoragePool;
+
+    /// <summary>
+    /// Node configuration file model.
+    /// </summary>
     public class NodeConfigFileModel
     {
-        public string NodeName { get; set; }
-        public string ClusterKey { get; set; }
-        public string HeaderApiKey { get; set; }
-        public UInt16 Version { get; set; }
-        public List<NodeConfigFileModel_MasterServers> Masters { get; set; }
-        public List<NodeConfigFileModel_Collections> Collections { get; set; }
-        public List<StoragePoolNodeConfigPartModel> StoragePools { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeConfigFileModel"/> class.
+        /// </summary>
         public NodeConfigFileModel()
         {
-            this.NodeName = "";
-            this.ClusterKey = "";
-            this.HeaderApiKey = "";
+            this.NodeName = string.Empty;
+            this.ClusterKey = string.Empty;
+            this.HeaderApiKey = string.Empty;
             this.Version = 1;
             this.Masters = new List<NodeConfigFileModel_MasterServers>();
             this.Collections = new List<NodeConfigFileModel_Collections>();
             this.StoragePools = new List<StoragePoolNodeConfigPartModel>();
-
         }
-    }
 
-    #region Collection models
+        /// <summary>
+        /// Gets or sets name of this node.
+        /// </summary>
+        public string NodeName { get; set; }
 
-    public class NodeConfigFileModel_Collections : NodeConfigFileModel_CollectionsAreas
-    {
-        //public string Id { get; set; }
-        //public string Name { get; set; }
-        //public bool Enabled { get; set; }
-        //public string StoragePoolMetaDefault { get; set; }
-        //public string StoragePoolDataDefault { get; set; }
-        public List<NodeConfigFileModel_CollectionsAreas> Areas { get; set; }
+        /// <summary>
+        /// Gets or sets security key for the cluster.
+        /// </summary>
+        public string ClusterKey { get; set; }
 
-        public NodeConfigFileModel_Collections()
-        {
-            this.Id = "";
-            this.Name = "";
-            this.Enabled = false;
-            this.StoragePoolMetaDefault = "";
-            this.StoragePoolDataDefault = "";
-            this.Areas = new List<NodeConfigFileModel_CollectionsAreas>();
-        }
-    }
-    public class NodeConfigFileModel_CollectionsAreas
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string StoragePoolMetaDefault { get; set; }
-        public string StoragePoolDataDefault { get; set; }
-        public bool Enabled { get; set; }
+        /// <summary>
+        /// Gets or sets header security key for access.
+        /// </summary>
+        public string HeaderApiKey { get; set; }
 
-        public NodeConfigFileModel_CollectionsAreas()
-        {
-            this.Id = "";
-            this.Name = "";
-            this.StoragePoolMetaDefault = "";
-            this.StoragePoolDataDefault = "";
-            this.Enabled = false;
-        }
-    }
+        /// <summary>
+        /// Gets or sets version of the configuration file.
+        /// </summary>
+        public ushort Version { get; set; }
 
-    #endregion
+        /// <summary>
+        /// Gets or sets list of all master servers.
+        /// </summary>
+        public List<NodeConfigFileModel_MasterServers> Masters { get; set; }
 
-  
+        /// <summary>
+        /// Gets or sets list for all collections.
+        /// </summary>
+        public List<NodeConfigFileModel_Collections> Collections { get; set; }
 
-    public class NodeConfigFileModel_MasterServers
-    {
-        public string Name { get; set; }
-        public string Ip { get; set; }
-        public Int16 Port { get; set; }
-        public UInt16 Prio { get; set; }
-
-        public NodeConfigFileModel_MasterServers()
-        {
-            this.Name = "";
-            this.Ip = "";
-            this.Port = 30511;
-            this.Prio = 5;
-        }
+        /// <summary>
+        /// Gets or sets list of all storage pools.
+        /// </summary>
+        public List<StoragePoolNodeConfigPartModel> StoragePools { get; set; }
     }
 }
-
