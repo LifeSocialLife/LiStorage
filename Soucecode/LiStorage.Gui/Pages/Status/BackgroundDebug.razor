@@ -1,0 +1,87 @@
+﻿@page "/status/backgrounddebug"
+
+@using LiTools.Helpers.Organize
+@inject BackgroundWorkService bgworkService;
+
+
+<h3>BackgroundDebug</h3>
+
+<h1>Background Work Service debug</h1>
+
+<p>
+    <button class="btn btn-primary" @onclick="WorkUpdate">Update background task data</button>
+</p>
+
+
+
+@if (bgwork == null)
+{
+    <p><em>Background services is loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name.</th>
+                <th>Enable</th>
+                <th>Created.</th>
+                <th>Last run?</th>
+                <th>Type</th>
+                <th>Delete?</th>
+                <th>Running?</th>
+                <th>Running enabled?</th>
+                <th>Interval</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var work in bgwork)
+            {
+                <tr>
+                    <td>@work.Name</td>
+                    <td>@work.Enabled</td>
+                    <td>@work.DtTaskCreated.ToShortDateString()</td>
+                    <td>@work.DtWhileLastRun.ToShortDateString()</td>
+                    <td>@work.TaskType.ToString()</td>
+                    <td>@work.AutoDeleteWhenDone</td>
+                    <td>@work.BackgroundTaskRunning</td>
+                    <td>@work.BackgroundTaskShodbeRunning</td>
+                    <td>@work.WhileInterval</td>
+
+                    <td></td>
+                    
+@*                    <td>@forecast..ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>*@
+                    
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+
+    //private WeatherForecast[] forecasts;
+    private List<BackgroundWorkModel> bgwork;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.WorkUpdate();
+        //        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+
+    private async Task WorkUpdate()
+    {
+        this.bgwork = bgworkService.GetAllTasksAsPart1Model();
+    }
+
+
+
+}
