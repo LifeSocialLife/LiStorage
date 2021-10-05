@@ -50,6 +50,7 @@ namespace LiStorage.Gui
         {
             // Helper taskservice
             services.AddSingleton<LiTools.Helpers.Organize.TaskService>();
+            services.AddSingleton<LiTools.Helpers.Organize.BackgroundWorkService>();
 
             // LiStorage backend services
             services.AddSingleton<RundataService>();
