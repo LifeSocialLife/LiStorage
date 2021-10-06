@@ -35,7 +35,6 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
-        // private readonly TaskService _task;
         private readonly BackgroundWorkService _bgWork;
         private readonly object _lockKey;
 
@@ -61,9 +60,6 @@ namespace LiStorage.Services.Node
             this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
             this._lockKey = new object();
             this.InitDone = false;
-            //this.BackgroundTaskRunning = false;
-            //this.BackgroundTaskShodbeRunning = false;
-            //this.BackgroundTaskLastRun = Convert.ToDateTime("2000-01-01 00:00:00");
         }
 
         /// <summary>
@@ -72,32 +68,6 @@ namespace LiStorage.Services.Node
         public bool InitDone { get; set; }
 
         private string TaskName => "storagepoolservice";
-
-        //TODO remove variables.
-        #region Background task Variables
-
-        /*
-         * 
-        /// <summary>
-        /// Gets or sets a value indicating whether is background task runinng?.
-        /// </summary>
-        public bool BackgroundTaskRunning { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether shod background task be running?.
-        /// </summary>
-        public bool BackgroundTaskShodbeRunning { get; set; }
-
-        /// <summary>
-        /// Gets or sets when was the background task last run?.
-        /// </summary>
-        public DateTime BackgroundTaskLastRun { get; set; }
-
-        */
-
-        #endregion
-
-
 
         private string zzDebug { get; set; }
 
@@ -152,8 +122,6 @@ namespace LiStorage.Services.Node
 
             return tmpReturn;
         }
-
-        
 
         /// <summary>
         /// Get information.
@@ -262,7 +230,6 @@ namespace LiStorage.Services.Node
 
         private void BackgroundTaskError()
         {
-
             // TODO Fix this.
             if (Debugger.IsAttached)
             {
