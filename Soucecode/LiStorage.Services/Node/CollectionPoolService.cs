@@ -200,7 +200,7 @@ namespace LiStorage.Services.Node
                 // TODO Fix this.
                 if (Debugger.IsAttached)
                 {
-                    Debugger.Break();
+                    // Debugger.Break();
                 }
             }
 
