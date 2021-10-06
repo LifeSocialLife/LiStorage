@@ -1,6 +1,8 @@
 ﻿@page "/status/backgrounddebug"
 
 @using LiTools.Helpers.Organize
+@using System.Timers
+@implements IDisposable
 @inject BackgroundWorkService bgworkService;
 
 
@@ -30,8 +32,10 @@ else
                 <th>Type</th>
                 <th>Delete?</th>
                 <th>Running?</th>
-                <th>Running enabled?</th>
+                <th>Shod be running?</th>
                 <th>Interval</th>
+                <th>TaskActionIsRunnig</th>
+                <th>TaskActionLastRunTime</th>
             </tr>
         </thead>
         <tbody>
@@ -40,15 +44,17 @@ else
                 <tr>
                     <td>@work.Name</td>
                     <td>@work.Enabled</td>
-                    <td>@work.DtTaskCreated.ToShortDateString()</td>
-                    <td>@work.DtWhileLastRun.ToShortDateString()</td>
+                    @*<td>@work.DtTaskCreated.ToShortDateString()</td>*@
+                    <td>@work.DtTaskCreated</td>
+                    <td>@work.DtWhileLastRun</td>
                     <td>@work.TaskType.ToString()</td>
                     <td>@work.AutoDeleteWhenDone</td>
                     <td>@work.BackgroundTaskRunning</td>
                     <td>@work.BackgroundTaskShodbeRunning</td>
-                    <td>@work.WhileInterval</td>
-
-                    <td></td>
+                    <td>@LiTools.Helpers.Organize.TimeHelper.MillisecondsStringRepportIntoNiceTextReturn(TimeValuesEnum.Days, work.WhileInterval, false)</td>
+                    <td>@work.TaskActionIsRunnig</td>
+                    <td>@work.TaskActionLastRunTime.TotalSeconds</td>
+                    <td><button class="btn btn-primary" @onclick="() => BtnTaskCancel(work.Name)">Task cancel</button></td>
                     
 @*                    <td>@forecast..ToShortDateString()</td>
                     <td>@forecast.TemperatureC</td>
@@ -69,19 +75,45 @@ else
 @code {
 
     //private WeatherForecast[] forecasts;
-    private List<BackgroundWorkModel> bgwork;
+    private List<BackgroundWorkModel>? bgwork;
+    private Timer timer = new(1000);
+
+    private string zzDebug = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        this.WorkUpdate();
+        this.zzDebug = string.Empty;
+
+        timer.Elapsed += (sender, eventArgs) => OnTimerCallback().Wait();
+        timer.Start();
+        
+        await this.WorkUpdate();
         //        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
     }
 
     private async Task WorkUpdate()
     {
-        this.bgwork = bgworkService.GetAllTasksAsPart1Model();
+        this.bgwork = bgworkService.GetAllTasksAsList();
+        await Task.Delay(1);
     }
 
+    private async Task OnTimerCallback()
+    {
+        await this.WorkUpdate();
+        _ = InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
 
+    private void BtnTaskCancel(string taskname)
+    {
+        bgworkService.Cancel(taskname);
+        this.zzDebug = "SDfdf";
+
+        // this.bgwork = bgworkService.GetAllTasksAsPart1Model();
+    }
+
+    public void Dispose() => timer.Dispose();
 
 }
