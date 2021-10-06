@@ -55,21 +55,15 @@ else
                     <td>@work.TaskActionIsRunnig</td>
                     <td>@work.TaskActionLastRunTime.TotalSeconds</td>
                     <td><button class="btn btn-primary" @onclick="() => BtnTaskCancel(work.Name)">Task cancel</button></td>
-                    
-@*                    <td>@forecast..ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>*@
-                    
-
                 </tr>
             }
         </tbody>
     </table>
 }
 
+<p>
+    Debug: @this.zzDebug
+</p>
 
 
 @code {
@@ -78,11 +72,11 @@ else
     private List<BackgroundWorkModel>? bgwork;
     private Timer timer = new(1000);
 
-    private string zzDebug = string.Empty;
+    private string zzDebug = "BackgroundDebug";
 
     protected override async Task OnInitializedAsync()
     {
-        this.zzDebug = string.Empty;
+        this.zzDebug = "OnInitializedAsync";
 
         timer.Elapsed += (sender, eventArgs) => OnTimerCallback().Wait();
         timer.Start();
