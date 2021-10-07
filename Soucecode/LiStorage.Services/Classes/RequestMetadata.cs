@@ -15,8 +15,6 @@ namespace LiStorage.Services.Classes
     /// </summary>
     public class RequestMetadata
     {
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestMetadata"/> class.
         /// </summary>

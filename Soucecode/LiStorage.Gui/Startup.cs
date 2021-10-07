@@ -12,7 +12,8 @@ namespace LiStorage.Gui
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using LiStorage.Gui.Data;
+
+    // using LiStorage.Gui.Data;
     using LiStorage.Services;
     using LiStorage.Services.Node;
     using Microsoft.AspNetCore.Builder;
@@ -50,6 +51,7 @@ namespace LiStorage.Gui
         {
             // Helper taskservice
             services.AddSingleton<LiTools.Helpers.Organize.TaskService>();
+            services.AddSingleton<LiTools.Helpers.Organize.BackgroundWorkService>();
 
             // LiStorage backend services
             services.AddSingleton<RundataService>();
@@ -64,7 +66,8 @@ namespace LiStorage.Gui
             // Blazor default services
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            
+            // services.AddSingleton<WeatherForecastService>();
 
             // Background services
             services.AddHostedService<Worker>();

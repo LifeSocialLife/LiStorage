@@ -35,7 +35,7 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly FileOperationService _fileOperation;
-        private readonly TaskService _task;
+        private readonly BackgroundWorkService _bgWork;
         private readonly object _lockKey;
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace LiStorage.Services.Node
         /// <param name="rundataService">RundataService.</param>
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
-        /// <param name="taskService">TaskService.</param>
-        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation, TaskService taskService)
+        /// <param name="taskService">BackgroundWorkService.</param>
+        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation, BackgroundWorkService taskService)
         {
             this.zzDebug = "StoragePoolService";
 
@@ -55,43 +55,20 @@ namespace LiStorage.Services.Node
             this._rundata = rundataService;
             this._node = rundataNode;
             this._fileOperation = fileOperation;
-            this._task = taskService;
+            this._bgWork = taskService;
             this.Storage = new Dictionary<string, StoragePoolModel>();
             this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");
             this._lockKey = new object();
             this.InitDone = false;
-            this.BackgroundTaskRunning = false;
-            this.BackgroundTaskShodbeRunning = false;
-            this.BackgroundTaskLastRun = Convert.ToDateTime("2000-01-01 00:00:00");
         }
-
-        #region Background task Variables
 
         /// <summary>
         /// Gets or sets a value indicating whether is init done on this service?.
         /// </summary>
         public bool InitDone { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether is background task runinng?.
-        /// </summary>
-        public bool BackgroundTaskRunning { get; set; }
+        private string TaskName => "storagepoolservice";
 
-        /// <summary>
-        /// Gets or sets a value indicating whether shod background task be running?.
-        /// </summary>
-        public bool BackgroundTaskShodbeRunning { get; set; }
-
-        /// <summary>
-        /// Gets or sets when was the background task last run?.
-        /// </summary>
-        public DateTime BackgroundTaskLastRun { get; set; }
-
-        #endregion
-
-        [SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
         private string zzDebug { get; set; }
 
         /// <summary>
@@ -147,68 +124,6 @@ namespace LiStorage.Services.Node
         }
 
         /// <summary>
-        /// Run check on storagepools.
-        /// </summary>
-        public void BackgroundTaskChecker()
-        {
-            this.zzDebug = "sfdsf";
-
-            // Init it not done. return
-            if (!this.InitDone)
-            {
-                return;
-            }
-
-            bool startBackgroundTask = false;
-
-            if ((!this.BackgroundTaskRunning) && this.BackgroundTaskShodbeRunning)
-            {
-                // Background work is not running.. Start backgroundwork.
-                startBackgroundTask = true;
-            }
-            else if ((DateTime.UtcNow - this.BackgroundTaskLastRun).TotalMinutes > 5)
-            {
-                // Background shod be running but have not reported anything for more then 5 min.
-                // TODO Fix this.
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-            }
-
-            if (startBackgroundTask)
-            {
-                // Check if task already exist?
-                if (this._task.TaskExists("storagepoolservice"))
-                {
-                    this._task.Check("storagepoolservice");
-                    System.Threading.Thread.Sleep(500);
-                }
-
-                // if (LiTools.Helpers.Organize.ParallelTask.Exist("storagepoolservice"))
-                if (this._task.TaskExists("storagepoolservice"))
-                {
-                    // Task already exist. what to do??
-                    // TODO Fix this.
-                    if (Debugger.IsAttached)
-                    {
-                        Debugger.Break();
-                    }
-                }
-                else
-                {
-                    // Start task.
-                    this.zzDebug = "dsf";
-                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "storagepoolservice", true);
-
-                    // LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "storagepoolservice");
-                }
-            }
-
-            this.zzDebug = "Check";
-        }
-
-        /// <summary>
         /// Get information.
         /// </summary>
         /// <param name="key">storage pool id.</param>
@@ -251,22 +166,116 @@ namespace LiStorage.Services.Node
             return data;
         }
 
+        /// <summary>
+        /// Run check on storagepools.
+        /// </summary>
+        public void BackgroundTaskChecker()
+        {
+            this.zzDebug = "sfdsf";
+
+            // Init it not done. return
+            if (!this.InitDone)
+            {
+                return;
+            }
+
+            /*
+            bool startBackgroundTask = false;
+            bool bgTaskStart = false;
+            bool bgTaskRestart = false;
+            */
+
+            // Do bg work exist.
+            var tmptaskdata = this._bgWork.GetTaskModel(this.TaskName);
+
+            if (tmptaskdata == null)
+            {
+                // Task dont exist.  Create new background task work.
+                this._bgWork.Start(new BackgroundWorkModel()
+                {
+                    Name = this.TaskName,
+                    Enabled = true,
+                    AutoDeleteWhenDone = false,
+                    BackgroundTaskRunning = false,
+                    BackgroundTaskShodbeRunning = true,
+                    TaskAction = this.BackgroundTask,
+                    TaskType = TaskRunTypeEnum.Long,
+                    WhileInterval = 1000 * 60,          //  1min.
+                    WhileIntervalErrorInSek = 60 * 10,      // 10 min.
+                    WhileIntervalErrorAction = this.BackgroundTaskError,
+                    WhileIntervalNoticInSek = 0,
+                    WhileIntervalWarningInSek = 0,
+                });
+
+                return;
+            }
+
+            if (!tmptaskdata.Enabled)
+            {
+                // this work is not enables. return check
+                return;
+            }
+
+            if (!tmptaskdata.BackgroundTaskShodbeRunning)
+            {
+                // Work it nos set as shod be running. Set shodberunning to True.
+                tmptaskdata.BackgroundTaskShodbeRunning = true;
+                return;
+            }
+
+            this.zzDebug = "Check";
+
+            return;
+        }
+
+        private void BackgroundTaskError()
+        {
+            // TODO Fix this.
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
+
+            this.zzDebug = "sdfdsf";
+        }
+
         private void BackgroundTask()
         {
+            this._logger.LogInformation("StoragePoolService running at: {time}", DateTimeOffset.UtcNow);
+
+            // Check all storagepools.
+            if (LiTools.Helpers.Organize.TimeHelper.TimeShodTrigger(this.StorageLastChecked, LiTools.Helpers.Organize.TimeValuesEnum.Minutes, 2))
+            {
+                this.CheckStoragePools();
+            }
+
+            // Collect information about drives in system.
+            if (LiTools.Helpers.Organize.TimeHelper.TimeShodTrigger(this._node.DrivesInformation.LastChecked, LiTools.Helpers.Organize.TimeValuesEnum.Minutes, 2))
+            {
+                this.CollecNodesDriveInformation();
+                this.zzDebug = "dfdf";
+
+                // var dddf = this._node.DrivesInformation;
+                this.NodesDriveInformationDataChangeHandler();
+            }
+
+            #region Old code.
+
+            /*
             // int i = 0;
 
             // while (!LiTools.Helpers.Organize.ParallelTask.Token.IsCancellationRequested)
             while (!this._task.IsCancellationRequested("storagepoolservice"))
             {
                 // Debug code
-                /*
+                
                 i++;
                 if (i == 10)
                 {
                     i = 99;
                     this._task.CancelTask("storagepoolservice");
                 }
-                */
+                
 
                 this.BackgroundTaskRunning = true;
                 this.BackgroundTaskLastRun = DateTime.UtcNow;
@@ -291,9 +300,10 @@ namespace LiStorage.Services.Node
                 }
             }
 
-            this.zzDebug = "sdfdsf";
+            */
+            #endregion
 
-            this.BackgroundTaskRunning = false;
+            this.zzDebug = "sdfdsf";
         }
 
         /// <summary>
@@ -302,10 +312,6 @@ namespace LiStorage.Services.Node
         private void CheckStoragePools()
         {
             this.zzDebug = "sdfdf";
-            if (!Helpers.TimeHelper.TimeShodTrigger(this.StorageLastChecked, Helpers.TimeValuesEnum.Minutes, 2))
-            {
-                return;
-            }
 
             if (this.Storage?.Count > 0)
             {
@@ -338,16 +344,6 @@ namespace LiStorage.Services.Node
             }
 
             this.zzDebug = "sdfd";
-
-            // Collect information about drives in system.
-            if (Helpers.TimeHelper.TimeShodTrigger(this._node.DrivesInformation.LastChecked, Helpers.TimeValuesEnum.Minutes, 2))
-            {
-                this.CollecNodesDriveInformation();
-                this.zzDebug = "dfdf";
-            }
-
-            // var dddf = this._node.DrivesInformation;
-            this.NodesDriveInformationDataChangeHandler();
 
             this.StorageLastChecked = DateTime.UtcNow;
             this.zzDebug = "sdfdf";

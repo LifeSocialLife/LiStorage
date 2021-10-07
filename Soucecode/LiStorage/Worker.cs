@@ -126,8 +126,11 @@ namespace LiStorage
 
             this.zzDebug = "sdfdsf";
 
+            /*
+            // Removed when updatering to background service insted of task service.
             // Set background status to shod be running.
-            this._storagepool.BackgroundTaskShodbeRunning = true;
+            // this._storagepool.BackgroundTaskShodbeRunning = true;
+            */
 
             while (!stoppingToken.IsCancellationRequested)
             {

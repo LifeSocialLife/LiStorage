@@ -43,6 +43,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiLog.Server.MongoDb", "LiL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiTools.Helpers.Organize", "..\..\LiTools\LiTools.Helpers.Organize\LiTools.Helpers.Organize.csproj", "{0C74BA7A-2BEE-497F-9EDD-02B07FBA92AA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiTools.Helpers.Generate", "..\..\LiTools\LiTools.Helpers.Generate\LiTools.Helpers.Generate.csproj", "{20088CF6-3A76-4AB9-A267-77E98130325D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32283503-4255-4658-B194-1FDA6FD517B4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +111,10 @@ Global
 		{0C74BA7A-2BEE-497F-9EDD-02B07FBA92AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C74BA7A-2BEE-497F-9EDD-02B07FBA92AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C74BA7A-2BEE-497F-9EDD-02B07FBA92AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20088CF6-3A76-4AB9-A267-77E98130325D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20088CF6-3A76-4AB9-A267-77E98130325D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20088CF6-3A76-4AB9-A267-77E98130325D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20088CF6-3A76-4AB9-A267-77E98130325D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +131,7 @@ Global
 		{E29BCFB8-F3AA-46DA-A30D-66DB56B413B4} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
 		{47ACD773-1F8A-44E4-BC1E-22FB3041F5EC} = {E54F79F4-42F0-410D-8868-70D01A8F7A94}
 		{0C74BA7A-2BEE-497F-9EDD-02B07FBA92AA} = {AE6BB7EA-1EFE-416E-8D09-174D00552E25}
+		{20088CF6-3A76-4AB9-A267-77E98130325D} = {AE6BB7EA-1EFE-416E-8D09-174D00552E25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59E8829D-A2BF-4DE2-93BA-9E57FD62429E}

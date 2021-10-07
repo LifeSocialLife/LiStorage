@@ -29,7 +29,9 @@ namespace LiStorage.Services.Node
         private readonly ILogger<CollectionPoolService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
-        private readonly TaskService _task;
+        private readonly BackgroundWorkService _bgWork;
+        
+        // private readonly TaskService _task;
 
         /*
         //private readonly IHostApplicationLifetime _hostApplicationLifetime;
@@ -54,14 +56,15 @@ namespace LiStorage.Services.Node
         /// <param name="fileStorageService">FileStorageService.</param>
         /// <param name="objectStorageService">ObjectStorageService.</param>
         /// <param name="nodeHttpService">NodeHttpService.</param>
-        /// <param name="taskService">TaskService.</param>
+        /// <param name="taskService">BackgroundWorkService.</param>
         [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-        public CollectionPoolService(ILogger<CollectionPoolService> logger,  RundataService rundataService, RundataNodeService rundataNode, TaskService taskService) // , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
+        public CollectionPoolService(ILogger<CollectionPoolService> logger,  RundataService rundataService, RundataNodeService rundataNode, BackgroundWorkService taskService) // , TaskService taskService) , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
         {
             // FileOperationService fileOperation, IHostApplicationLifetime hostappLifetime,
             this.zzDebug = "NodeWorker";
 
-            this._task = taskService;
+            //this._task = taskService;
+            this._bgWork = taskService;
             this._logger = logger;
             this._rundata = rundataService;
             this._node = rundataNode;
@@ -85,6 +88,11 @@ namespace LiStorage.Services.Node
         /// </summary>
         public bool InitDone { get; set; }
 
+        private string TaskName => "collectionpoolservice";
+
+        #endregion
+
+        /*
         /// <summary>
         /// Gets or sets a value indicating whether is background task runinng?.
         /// </summary>
@@ -100,7 +108,9 @@ namespace LiStorage.Services.Node
         /// </summary>
         public DateTime BackgroundTaskLastRun { get; set; }
 
-        #endregion
+        
+
+        */
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
@@ -175,6 +185,8 @@ namespace LiStorage.Services.Node
             return data;
         }
 
+        #region Background work handler.
+
         /// <summary>
         /// Run check on storagepools.
         /// </summary>
@@ -186,82 +198,63 @@ namespace LiStorage.Services.Node
                 return;
             }
 
-            var dd = this.Collections;
-            bool startBackgroundTask = false;
+            // Do bg work exist.
+            var tmptaskdata = this._bgWork.GetTaskModel(this.TaskName);
 
-            if ((!this.BackgroundTaskRunning) && this.BackgroundTaskShodbeRunning)
+            if (tmptaskdata == null)
             {
-                // Background work is not running.. Start backgroundwork.
-                startBackgroundTask = true;
+                // Task dont exist.  Create new background task work.
+                this._bgWork.Start(new BackgroundWorkModel()
+                {
+                    Name = this.TaskName,
+                    Enabled = true,
+                    AutoDeleteWhenDone = false,
+                    BackgroundTaskRunning = false,
+                    BackgroundTaskShodbeRunning = true,
+                    TaskAction = this.BackgroundTask,
+                    TaskType = TaskRunTypeEnum.Long,
+                    WhileInterval = 1000 * 60,          //  1min.
+                    WhileIntervalErrorInSek = 60 * 10,      // 10 min.
+                    WhileIntervalErrorAction = this.BackgroundTaskError,
+                    WhileIntervalNoticInSek = 0,
+                    WhileIntervalWarningInSek = 0,
+                });
+
+                return;
             }
-            else if ((DateTime.UtcNow - this.BackgroundTaskLastRun).TotalMinutes > 5)
+
+            if (!tmptaskdata.Enabled)
             {
-                // Background shod be running but have not reported anything for more then 5 min.
-                // TODO Fix this.
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
+                // this work is not enables. return check
+                return;
             }
 
-            if (startBackgroundTask)
+            if (!tmptaskdata.BackgroundTaskShodbeRunning)
             {
-                // Check if task already exist?
-                if (this._task.TaskExists("collectionservice"))
-                {
-                    this._task.Check("collectionservice");
-                    System.Threading.Thread.Sleep(500);
-                }
-
-                // if (LiTools.Helpers.Organize.ParallelTask.Exist("storagepoolservice"))
-                if (this._task.TaskExists("collectionservice"))
-                {
-                    // Task already exist. what to do??
-                    // TODO Fix this.
-                    if (Debugger.IsAttached)
-                    {
-                        Debugger.Break();
-                    }
-                }
-                else
-                {
-                    // Start task.
-                    this.zzDebug = "dsf";
-                    this._task.StartNew(this.BackgroundTask, TaskRunTypeEnum.Long, "collectionservice", true);
-
-                    // LiTools.Helpers.Organize.ParallelTask.StartLongRunning(this.BackgroundTask, LiTools.Helpers.Organize.ParallelTask.Token.Token, "storagepoolservice");
-                }
+                // Work it nos set as shod be running. Set shodberunning to True.
+                tmptaskdata.BackgroundTaskShodbeRunning = true;
+                return;
             }
 
             this.zzDebug = "Check";
         }
 
-        private void BackgroundTask()
+        private void BackgroundTaskError()
         {
-            while (!LiTools.Helpers.Organize.ParallelTask.Token.IsCancellationRequested)
+            // TODO Fix this.
+            if (Debugger.IsAttached)
             {
-                this.BackgroundTaskRunning = true;
-                this.BackgroundTaskLastRun = DateTime.UtcNow;
-
-                if (!this.BackgroundTaskShodbeRunning)
-                {
-                    break;
-                }
-
-                this._logger.LogInformation("Collection Service running at: {time}", DateTimeOffset.Now);
-                try
-                {
-                    System.Threading.Thread.Sleep(1000);
-
-                    // await Task.Delay(1000, LiTools.Helpers.Organize.ParallelTask.Token.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
+                Debugger.Break();
             }
 
-            this.BackgroundTaskRunning = false;
+            this.zzDebug = "sdfdsf";
         }
+
+        private void BackgroundTask()
+        {
+            this._logger.LogInformation("Collection Service running at: {time}", DateTimeOffset.Now);
+        }
+
+        #endregion
     }
 }

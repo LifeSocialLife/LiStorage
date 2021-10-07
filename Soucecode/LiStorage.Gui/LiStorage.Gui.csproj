@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-rc.1.21451.13" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
-    <PackageReference Include="Watson" Version="4.2.0.2" />
+    <PackageReference Include="Watson" Version="4.2.2" />
   </ItemGroup>
   
   <ItemGroup>
@@ -36,6 +36,10 @@
     <ProjectReference Include="..\LiStorage.Services\LiStorage.Services.csproj" />
     <ProjectReference Include="..\LiStorage\LiStorage.csproj" />
     
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
-﻿// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+﻿// <summary>
+// CodeAnalysis suppressmessage file.
+// </summary>
+// <copyright file="GlobalSuppressions.cs" company="LiSoLi">
+// Copyright (c) LiSoLi. All rights reserved.
+// </copyright>
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -33,3 +35,10 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.StoragePoolService._task")]
 [assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:Do not use regions", Justification = "Reviewed.", Scope = "member", Target = "~P:LiStorage.Services.Node.CollectionPoolService.InitDone")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.CollectionPoolService._task")]
+[assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:Do not use regions", Justification = "Reviewed.", Scope = "member", Target = "~P:LiStorage.Services.Node.StoragePoolService.BackgroundTaskRunning")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:Element should begin with upper-case letter", Justification = "Reviewed.", Scope = "member", Target = "~P:LiStorage.Services.Node.StoragePoolService.zzDebug")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.", Scope = "member", Target = "~P:LiStorage.Services.Node.StoragePoolService.zzDebug")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.StoragePoolService._bgWork")]
+[assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:Do not place regions within elements", Justification = "Reviewed.", Scope = "member", Target = "~M:LiStorage.Services.Node.StoragePoolService.BackgroundTask")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.CollectionPoolService._bgWork")]
+[assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:Do not use regions", Justification = "Reviewed.", Scope = "member", Target = "~M:LiStorage.Services.Node.CollectionPoolService.BackgroundTaskChecker")]
