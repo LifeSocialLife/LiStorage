@@ -45,7 +45,7 @@ namespace LiStorage.Services.Node
         /// <param name="rundataService">RundataService.</param>
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
-        /// <param name="taskService">TaskService.</param>
+        /// <param name="taskService">BackgroundWorkService.</param>
         public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation, BackgroundWorkService taskService)
         {
             this.zzDebug = "StoragePoolService";
@@ -200,7 +200,7 @@ namespace LiStorage.Services.Node
                     BackgroundTaskShodbeRunning = true,
                     TaskAction = this.BackgroundTask,
                     TaskType = TaskRunTypeEnum.Long,
-                    WhileInterval = 1000 * 60 * 5,          //  5min.
+                    WhileInterval = 1000 * 60,          //  1min.
                     WhileIntervalErrorInSek = 60 * 10,      // 10 min.
                     WhileIntervalErrorAction = this.BackgroundTaskError,
                     WhileIntervalNoticInSek = 0,

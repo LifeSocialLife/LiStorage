@@ -46,7 +46,7 @@ else
                     <td>@work.Enabled</td>
                     @*<td>@work.DtTaskCreated.ToShortDateString()</td>*@
                     <td>@work.DtTaskCreated</td>
-                    <td>@work.DtWhileLastRun</td>
+                    <td>@LiTools.Helpers.Organize.TimeHelper.TimespanToNiceText(work.DtWhileLastRun)</td>
                     <td>@work.TaskType.ToString()</td>
                     <td>@work.AutoDeleteWhenDone</td>
                     <td>@work.BackgroundTaskRunning</td>
