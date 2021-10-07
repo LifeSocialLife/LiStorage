@@ -40,3 +40,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.", Scope = "member", Target = "~P:LiStorage.Services.Node.StoragePoolService.zzDebug")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.StoragePoolService._bgWork")]
 [assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:Do not place regions within elements", Justification = "Reviewed.", Scope = "member", Target = "~M:LiStorage.Services.Node.StoragePoolService.BackgroundTask")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:Field names should not begin with underscore", Justification = "Reviewed.", Scope = "member", Target = "~F:LiStorage.Services.Node.CollectionPoolService._bgWork")]
+[assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1124:Do not use regions", Justification = "Reviewed.", Scope = "member", Target = "~M:LiStorage.Services.Node.CollectionPoolService.BackgroundTaskChecker")]
