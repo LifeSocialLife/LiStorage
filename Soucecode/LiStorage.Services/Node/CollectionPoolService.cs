@@ -12,6 +12,7 @@ namespace LiStorage.Services.Node
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using LiStorage.Models.CollectionPool;
@@ -30,7 +31,8 @@ namespace LiStorage.Services.Node
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
         private readonly BackgroundWorkService _bgWork;
-        
+        private readonly StoragePoolService _storagePool;
+
         // private readonly TaskService _task;
 
         /*
@@ -41,8 +43,6 @@ namespace LiStorage.Services.Node
         //private readonly ObjectStorageService _objectStorage;
         //private readonly NodeHttpService _httpserver;
         */
-
-        private Dictionary<string, CollectionPoolModel> Collections { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionPoolService"/> class.
@@ -57,17 +57,16 @@ namespace LiStorage.Services.Node
         /// <param name="objectStorageService">ObjectStorageService.</param>
         /// <param name="nodeHttpService">NodeHttpService.</param>
         /// <param name="taskService">BackgroundWorkService.</param>
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-        public CollectionPoolService(ILogger<CollectionPoolService> logger,  RundataService rundataService, RundataNodeService rundataNode, BackgroundWorkService taskService) // , TaskService taskService) , StoragePoolService storagePoolService, ObjectStorageService objectStorageService, NodeHttpService nodeHttpService)
+        public CollectionPoolService(ILogger<CollectionPoolService> logger,  RundataService rundataService, RundataNodeService rundataNode, BackgroundWorkService taskService, StoragePoolService storagePoolService) 
         {
             // FileOperationService fileOperation, IHostApplicationLifetime hostappLifetime,
             this.zzDebug = "NodeWorker";
 
-            //this._task = taskService;
-            this._bgWork = taskService;
             this._logger = logger;
             this._rundata = rundataService;
             this._node = rundataNode;
+            this._storagePool = storagePoolService;
+            this._bgWork = taskService;
 
             /*
             //this._hostApplicationLifetime = hostappLifetime;
@@ -81,6 +80,8 @@ namespace LiStorage.Services.Node
             this.Collections = new Dictionary<string, CollectionPoolModel>();
         }
 
+        private Dictionary<string, CollectionPoolModel> Collections { get; set; }
+
         #region Background task Variables
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace LiStorage.Services.Node
 
         #endregion
 
-        /*
+        /* Old background variables.
         /// <summary>
         /// Gets or sets a value indicating whether is background task runinng?.
         /// </summary>
@@ -112,9 +113,6 @@ namespace LiStorage.Services.Node
 
         */
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Reviewed.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Reviewed.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
         private string zzDebug { get; set; }
 
         /// <summary>
@@ -122,18 +120,34 @@ namespace LiStorage.Services.Node
         /// </summary>
         /// <param name="key">collection key id.</param>
         /// <returns>true or false. do it exist.</returns>
-        [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:BracesMustNotBeOmitted", Justification = "Reviewed.")]
         public bool ContainsKey(string key)
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                return false;
+            }
+
             bool tmpReturn = false;
 
             lock (this._lockKey)
             {
                 if (this.Collections.ContainsKey(key))
+                {
                     tmpReturn = true;
+                }
             }
 
             return tmpReturn;
+        }
+
+        /// <summary>
+        /// Do Collection pool exist?.
+        /// </summary>
+        /// <param name="key">collection key id.</param>
+        /// <returns>true or false. do it exist.</returns>
+        public bool Exist(string key)
+        {
+            return this.ContainsKey(key);
         }
 
         /// <summary>
@@ -170,7 +184,7 @@ namespace LiStorage.Services.Node
         }
 
         /// <summary>
-        /// Get all collections and return as new dictonary.
+        /// Get all collections and return as new dictonary. (copy).
         /// </summary>
         /// <returns>Dictionary whit all collections.</returns>
         public Dictionary<string, CollectionPoolModel> GetAll()
@@ -184,6 +198,20 @@ namespace LiStorage.Services.Node
 
             return data;
         }
+
+        public List<string> GetAllKeys()
+        {
+            // var tmpkeys = new List<string>();
+            lock (this._lockKey)
+            {
+                return this.Collections.Keys.ToList();
+
+                // tmpkeys = new List<string>(this.Collections.Keys);
+            }
+
+            // return tmpkeys;
+        }
+
 
         #region Background work handler.
 
@@ -253,8 +281,96 @@ namespace LiStorage.Services.Node
         private void BackgroundTask()
         {
             this._logger.LogInformation("Collection Service running at: {time}", DateTimeOffset.Now);
+
+            var a1 = this._rundata;
+            var a2 = this._node;
+            var a3 = this._storagePool;
+            var b1 = this.Collections;
+            this.zzDebug = "dsfds";
+
+            // Check if storagepool init is done. if not. stop running this.
+            if (!this._storagePool.InitDone)
+            {
+                // Stg init is not done.
+                this._logger.LogInformation("Stg pool init is not done. aborting.");
+                return;
+            }
+
+            // Get all keys from collection pools
+            List<string> tmpkeys = new List<string>(this.GetAllKeys());
+            
+            if (tmpkeys == null || tmpkeys.Count == 0)
+            {
+                this._logger.LogInformation("No collection keys exist.");
+                return;
+            }
+
+            #region Is init done or not on collection pools.
+
+            if (!this.InitDone)
+            {
+                // Init is note done. do init.
+                foreach (var collId in tmpkeys)
+                {
+                    try
+                    {
+                        if (this.Collections[collId].InitDone)
+                        {
+                            // Init is done on this stg pool.
+                            continue;
+                        }
+
+                        // Do init in this stg pool.
+                        this.DoInitOnCollectionPool(collId);
+                    }
+                    catch (Exception e)
+                    {
+                        this._logger.LogWarning($"Collection pool {collId} - init error. Message: {e.Message}");
+                    }
+                }
+
+                this.InitDone = true;
+            }
+
+            #endregion
+
+
+
         }
 
         #endregion
+
+        /// <summary>
+        /// Init on collection pool.
+        /// </summary>
+        /// <param name="collName">Name of collection pool. (key).</param>
+        private void DoInitOnCollectionPool(string collName)
+        {
+            if (!this.Exist(collName))
+            {
+                // Collection dont exist.
+                return;
+            }
+            
+            lock (this._lockKey)
+            {
+                if (this.Collections[collName].InitDone)
+                {
+                    // Init is done on this collection pool.
+                    return;
+                }
+
+                // Check if storage pool exist before set initdone.
+                if (this._storagePool.ContainsKey(this.Collections[collName].Filedata.StoragePoolDataDefault))
+                {
+                    this.Collections[collName].Status.PoolDataExist = true;
+                }
+                else
+                {
+                    this.Collections[collName].Status.PoolDataExist = false;
+                }
+            }
+            
+        }
     }
 }
