@@ -7,10 +7,10 @@
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.0-6.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-6.final" />
+    <!--<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-6.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-6.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-6.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0-rc.1.21452.15" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0" />-->
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,10 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Watson" Version="4.2.2" />
+    <PackageReference Include="Watson" Version="4.2.2.2" />
     <PackageReference Include="JWT" Version="8.4.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-rc.1.21451.13" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-rc.1.21451.13" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
   
 </Project>
