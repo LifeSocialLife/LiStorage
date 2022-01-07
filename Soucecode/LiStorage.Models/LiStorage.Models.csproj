@@ -6,14 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.1.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.1.0-1.final" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.1" />
+    <!--<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-6.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-6.final" />-->
+    <!--<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.0-6.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Razor" Version="6.0.0" />-->
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.0-6.final" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.376">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\LiTools\LiTools.Helpers.IO\LiTools.Helpers.IO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Website\Pages\Status\" />
   </ItemGroup>
 
 </Project>
