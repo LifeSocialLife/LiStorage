@@ -34,7 +34,7 @@ namespace LiStorage.Services.Node
         private readonly ILogger<StoragePoolService> _logger;
         private readonly RundataService _rundata;
         private readonly RundataNodeService _node;
-        private readonly FileOperationService _fileOperation;
+        // private readonly FileOperationService _fileOperation;
         private readonly BackgroundWorkService _bgWork;
         private readonly object _lockKey;
 
@@ -46,15 +46,17 @@ namespace LiStorage.Services.Node
         /// <param name="fileOperation">FileOperationService.</param>
         /// <param name="rundataNode">RundataNodeService.</param>
         /// <param name="taskService">BackgroundWorkService.</param>
-        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode, FileOperationService fileOperation, BackgroundWorkService taskService)
+        public StoragePoolService(ILogger<StoragePoolService> logger, RundataService rundataService, RundataNodeService rundataNode,  BackgroundWorkService taskService)
         {
+            // FileOperationService fileOperation,
+
             this.zzDebug = "StoragePoolService";
 
             this._logger = logger;
 
             this._rundata = rundataService;
             this._node = rundataNode;
-            this._fileOperation = fileOperation;
+            //this._fileOperation = fileOperation;
             this._bgWork = taskService;
             this.Storage = new Dictionary<string, StoragePoolModel>();
             this.StorageLastChecked = Convert.ToDateTime("2000-01-01 00:00:00");

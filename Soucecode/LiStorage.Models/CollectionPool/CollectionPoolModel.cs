@@ -29,6 +29,8 @@ namespace LiStorage.Models.CollectionPool
         /// </summary>
         public NodeConfigFileModel_CollectionsAreas Filedata { get; set; }
 
+        public CollectionPoolModel_Status Status { get; set;  }
+        
         /// <summary>
         /// Gets or sets when where status (check) last run on this collection pool.
         /// </summary>
@@ -38,5 +40,21 @@ namespace LiStorage.Models.CollectionPool
         /// Gets or sets a value indicating whether is init done on this storage pool.
         /// </summary>
         public bool InitDone { get; set; }
+    }
+
+    public class CollectionPoolModel_Status
+    {
+        public CollectionPoolModel_Status()
+        {
+            this.PoolDataExist = false;
+            this.PoolDataOnline = false;
+            this.PoolMetaExist = false;
+            this.PoolMetaOnline = false;
+        }
+
+        public bool PoolDataExist { get; set; }
+        public bool PoolDataOnline { get; set; }
+        public bool PoolMetaExist { get; set; }
+        public bool PoolMetaOnline { get; set; }
     }
 }
